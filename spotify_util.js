@@ -55,11 +55,86 @@ let get_top = (access_token, type, limit, offset, time_range) => {
 		});
 };
 
-let make_playlist = () => {
-	
+let create_playlist = (access_token, user_id, playlist_name, public_access, collaborative, description) => {
+	let endpoint = 'https://api.spotify.com/v1/users/' + user_id + '/playlists';
+
+	let headers = {
+		Authorization: 'Bearer ' + access_token,
+		'Content-Type': 'application/json'
+	};
+
+	let data = { // Parameters for api request body
+		name: playlist_name,
+		public: public_access,
+		collaborative: collaborative,
+		description: description
+	};
+
+	return axios({
+		method: 'post',
+		url: endpoint,
+		data: data,
+		headers: headers 
+	})
+		.then(res => {
+			return res.data; // Return information of the playlist
+		})
+		.catch(err => {
+			return err;
+		});
+};
+
+let get_current_user = (access_token) => {
+	let endpoint = 'https://api.spotify.com/v1/me';
+
+	let headers = {
+		Authorization: 'Bearer ' + access_token 
+	};
+
+	return axios({
+		method: 'get',
+		url: endpoint,
+		headers: headers
+	})
+		.then(res => {
+			return res.data;
+		})
+		.catch(err => {
+			return err;
+		})
+};
+
+let add_tracks_playlist = (access_token, playlist_id, uris, position) => {
+	let endpoint = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks';
+
+	let headers = {
+		Authorization: 'Bearer ' + access_token,
+		'Content-Type': 'application/json'
+	};
+
+	let data = { // Parameters for api request body
+		uris: uris,
+		position: position
+	};
+
+	return axios({
+		method: 'post',
+		url: endpoint,
+		data: data,
+		headers: headers
+	})
+		.then(res => {
+			return res;
+		})
+		.catch(err => {
+			return err;
+		});
 };
 
 module.exports = {
 	get_tokens: get_tokens,
-	get_top: get_top
+	get_top: get_top,
+	create_playlist: create_playlist,
+	get_current_user: get_current_user,
+	add_tracks_playlist: add_tracks_playlist
 };
