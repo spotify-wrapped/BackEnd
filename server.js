@@ -32,19 +32,21 @@ app.get('/', (req, res) => {
 // Request refresh and access tokens from Spotify after being granted authorization and get user top 50 songs
 app.get('/callback', async(req, res) => {
 	let authorization_code = req.query.code;
-
 	let tokens = await spotify_util.get_tokens(client_id, client_secret, authorization_code, redirect_uri);
-
 	let profile = await spotify_util.get_current_user(tokens.access_token);
 
-
 	// Parameters for getting the top played of user
-	let type = 'tracks';
-	let limit = 5;
-	let offset = 0;
-	let time_range = 'medium_term'
-
-	let songs_data = await spotify_util.get_top(tokens.access_token, type, limit, offset, time_range);
+	let get_top_params = {
+		type: 'tracks',
+		limit: 50,
+		offset: 0,
+		time_range: 'short_term'};
+	let songs_data = await spotify_util.get_top(
+		tokens.access_token, 
+		get_top_params.type, 
+		get_top_params.limit, 
+		get_top_params.offset, 
+		get_top_params.time_range);
 
 	// Get array of song uris
 	let uris = [];
@@ -52,22 +54,31 @@ app.get('/callback', async(req, res) => {
 		uris.push(song.uri)
 	}
 
-	res.send(songs_data.items);
-
 	// Parameters for creating playlist for user
-	let user_id = profile.id;
-	let playlist_name = 'TEST PLAYLIST';
-	let public_access = true;
-	let collaborative = false;
-	let description = 'TEST PLAYLIST';
-
-	let playlist_data = await spotify_util.create_playlist(tokens.access_token, user_id, playlist_name, public_access, collaborative, description);
+	let create_playlist_params = {
+		user_id: profile.id,
+		playlist_name: 'Top 50 Past 4 Weeks',
+		public_access: true,
+		collaborative: false,
+		description: 'Your most played song from the past 4 weeks.'};
+	let playlist_data = await spotify_util.create_playlist(
+		tokens.access_token, 
+		create_playlist_params.user_id, 
+		create_playlist_params.playlist_name, 
+		create_playlist_params.public_access, 
+		create_playlist_params.collaborative, 
+		create_playlist_params.description);
 
 	// Params for adding songs
-	let position = 0;
+	add_tracks_playlist_params = {
+		position: 0
+	};
+	let add_track_data = await spotify_util.add_tracks_playlist(
+		tokens.access_token, 
+		playlist_data.id, uris, 
+		add_tracks_playlist_params.position);
 
-	let add_track_data = await spotify_util.add_tracks_playlist(tokens.access_token, playlist_data.id, uris, position);
-	console.log(add_track_data);
+	res.send('Check your Spotify! A playlist has been created!');
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
