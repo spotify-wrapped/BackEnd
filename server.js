@@ -1,20 +1,24 @@
-const express = require('express'); // Library for creating server 
-const helmet = require('helmet'); // Middleware for security
-const axios = require('axios'); // Library to make HTTP request
-const querystring = require('querystring'); //Library to parse and stringify URL query strings
-
-const spotify_util = require('./spotify_util');
-
-const port = process.env.PORT || 3000;
-
 let client_id = '00dbb8102992441496cd4af8dc72d314';
 let client_secret = '8634927c44de43e2a9ec61ab13fd3036';
 let redirect_uri = 'http://localhost:3000/callback';
 let scope = 'user-top-read playlist-modify-public playlist-modify-private user-read-private user-read-email user-read-birthdate';
 
+const express = require('express'); // Library for creating server 
+const helmet = require('helmet'); // Middleware for security
+const axios = require('axios'); // Library to make HTTP request
+const querystring = require('querystring'); //Library to parse and stringify URL query strings
+const spotify_util = require('./spotify_util');
+
+const exphbs = require('express-handlebars');
 const app = express();
+const port = process.env.PORT || 3000;
 
 app.use(helmet());
+
+// Handlebars
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
+ 
 
 // Request authorization from user to access user data
 app.get('/', (req, res) => { 
@@ -26,7 +30,21 @@ app.get('/', (req, res) => {
 		show_dialog: true,
 		response_type: 'code'
 	};
-	res.redirect(endpoint + querystring.stringify(params));
+
+	// Data to pass to 'home'
+	const topArtist = "Top Artist";
+	const topAlbum = "Top Album";
+
+	// res.redirect(endpoint + querystring.stringify(params));
+
+	// Inject 'home' view into 'main' body, add helper mathod
+	res.render('home', {
+		topArtist,
+		topAlbum,
+		helpers: {
+			// onClick: function(){ console.log('On click'); }
+		}
+	});
 });
 
 // Request refresh and access tokens from Spotify after being granted authorization and get user top 50 songs
