@@ -1,0 +1,31 @@
+.card {
+    position: absolute;    
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: Gray;
+    color: Black;
+    width: 50vw;
+    height: 50vh;
+}
+
+.container {
+    position: relative;
+    top: 50%;
+}
+
+.image {
+    background-color: Gray;
+    color: Black;
+    position: absolute;
+    transform: translateY(-50%);
+    left: 0;
+}
+
+.text {
+    background-color: Gray;
+    color: Black;
+    position: absolute;
+    transform: translateY(-50%);
+    right: 0;
+}
