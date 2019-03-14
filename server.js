@@ -22,7 +22,7 @@ app.set('view engine', 'handlebars');
 
 // Request authorization from user to access user data
 app.get('/', (req, res) => { 
-    let endpoint = 'https://accounts.spotify.com/authorize?';
+	let endpoint = 'https://accounts.spotify.com/authorize?';
 	let params = { // Parameters for authorization request
 		client_id: client_id,
 		redirect_uri: redirect_uri,
@@ -31,20 +31,10 @@ app.get('/', (req, res) => {
 		response_type: 'code'
 	};
 
-	// Data to pass to 'home'
-	const topArtist = "Top Artist";
-	const topAlbum = "Top Album";
+	let authorizeUrl = endpoint + querystring.stringify(params);
 
-	// res.redirect(endpoint + querystring.stringify(params));
-
-	// Inject 'home' view into 'main' body, add helper mathod
-	res.render('home', {
-		topArtist,
-		topAlbum,
-		helpers: {
-			// onClick: function(){ console.log('On click'); }
-		}
-	});
+    // Inject 'home' view into 'main' body, add helper mathod
+	res.render('home', { authorizeUrl });
 });
 
 // Request refresh and access tokens from Spotify after being granted authorization and get user top 50 songs
@@ -68,6 +58,7 @@ app.get('/callback', async(req, res) => {
 
 	// Get array of song uris
 	let uris = [];
+	console.log(songs_data);
 	for(song of songs_data.items){
 		uris.push(song.uri)
 	}

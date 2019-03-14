@@ -1,13 +1,18 @@
-<h1>Example App: Home</h1>
-<h1>{{topArtist}}</h1>
-<h1>{{topAlbum}}</h1>
-<button onclick="onClick()">Click</button>
-<h1 id="a"></h1>
+<h1>Spotify Wrapped</h1>
+<a href={{authorizeUrl}}>Start</a>
+<button onClick="onClick()">Pop Up</button>
 
 <script>
-    function onClick() {
-        document.getElementById("a").innerHTML = "Hello World";
+	const authorizeUrl = '{{{authorizeUrl}}}';
 
-        console.log('hi')
-    }
+	function onClick() {
+		let spotifyAuthWindow = window.open(authorizeUrl, 'spotifyAuthWindow', 'height=200,width=150');
+
+		spotifyAuthWindow.addEventListener('beforeunload', (event) => {
+			// Cancel the event as stated by the standard
+			event.preventDefault();
+			// Chrome requires returnValue to be set.
+			event.returnValue = '';
+		});
+	}
 </script>
