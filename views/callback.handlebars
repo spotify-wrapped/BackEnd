@@ -1,0 +1,16 @@
+{{! 
+	Confirmation page Spotify semi-wrapped authorization pop-up
+	This page will close as soon as it is loaded and pass parent window the auth code if granted by user.
+}}
+
+<h1>Authorized</h1>
+
+<script>
+	// Get auth code from url
+	const authUrl = window.location.href;
+	const authUrlObject = new URL(authUrl);
+	const authCode = authUrlObject.searchParams.get('code');
+	
+	window.opener.getAuthCode(authCode);
+	window.close()
+</script>
