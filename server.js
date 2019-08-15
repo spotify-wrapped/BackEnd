@@ -1,14 +1,14 @@
-let client_id = '00dbb8102992441496cd4af8dc72d314';
-let client_secret = '8634927c44de43e2a9ec61ab13fd3036';
-let redirect_uri = 'http://localhost:3000/callback';
-let scope = 'user-top-read playlist-modify-public playlist-modify-private user-read-private user-read-email user-read-birthdate';
+// Variables needed to retrieve spotify access tokens, which are used to make api request
+const client_id = '00dbb8102992441496cd4af8dc72d314';
+const client_secret = '8634927c44de43e2a9ec61ab13fd3036';
+const redirect_uri = 'http://localhost:3000/callback';
+const scope = 'user-top-read playlist-modify-public playlist-modify-private user-read-private user-read-email user-read-birthdate';
 
 const express = require('express'); // Library for creating server 
 const path = require('path');
 const helmet = require('helmet'); // Middleware for security
-const axios = require('axios'); // Library to make HTTP request
-const querystring = require('querystring'); //Library to parse and stringify URL query strings
-const spotify_util = require('./spotify_util');
+const querystring = require('querystring'); // Library to parse and stringify URL query strings
+const spotify_util = require('./spotify_util'); // Utility used to make spotify api calls
 
 const exphbs = require('express-handlebars');
 const app = express();
@@ -58,61 +58,53 @@ app.get('/top', (req, res) => {
 });
 
 // Served after user authorizes account
-app.get('/callback', async(req, res) => {
+app.get('/_callback', async(req, res) => {
 	console.log('hello world');
 });
 
-// Request refresh and access tokens from Spotify after being granted authorization and get user top 50 songs
-app.get('/fixthislater', async(req, res) => {
+// {0m0}
+app.get('/callback', async(req, res) => {
 	let authorization_code = req.query.code;
 	let tokens = await spotify_util.get_tokens(client_id, client_secret, authorization_code, redirect_uri);
 	let profile = await spotify_util.get_current_user(tokens.access_token);
 
-	// Parameters for getting the top played of user
-	let get_top_params = {
-		type: 'tracks',
-		limit: 50,
-		offset: 0,
-		time_range: 'short_term'};
+	// Get top songs by user
 	let songs_data = await spotify_util.get_top(
 		tokens.access_token, 
-		get_top_params.type, 
-		get_top_params.limit, 
-		get_top_params.offset, 
-		get_top_params.time_range);
+		'tracks', // Type of 'top' list to retrieve 
+		50, // Limit of tracks to get 
+		0, // Offset in 'top' list to retrieve from (0 = start) 
+		'short_term' // Time range of top tracks to retrieve from (4 weeks)
+	);
 
-	// Get array of song uris
+	// Get array of song uris from the song_data
+	let song_names = []; // Used to display user the top songs in clean way
 	let uris = [];
 	console.log(songs_data);
 	for(song of songs_data.items){
 		uris.push(song.uri)
+		song_names.push(song.name);
 	}
 
-	// Parameters for creating playlist for user
-	let create_playlist_params = {
-		user_id: profile.id,
-		playlist_name: 'Top 50 Past 4 Weeks',
-		public_access: true,
-		collaborative: false,
-		description: 'Your most played song from the past 4 weeks.'};
+	// Create EMPTY playlist for the user
 	let playlist_data = await spotify_util.create_playlist(
 		tokens.access_token, 
-		create_playlist_params.user_id, 
-		create_playlist_params.playlist_name, 
-		create_playlist_params.public_access, 
-		create_playlist_params.collaborative, 
-		create_playlist_params.description);
+		profile.id, // User id to add the playlist to 
+		'Top 50 Past 4 Weeks', // Name of the playlist 
+		true, // Boolean for public access to playlist 
+		false, // Boolean for collaborative playlist 
+		'["_"]' // Description of the playlist
+	);
 
-	// Params for adding songs
-	add_tracks_playlist_params = {
-		position: 0
-	};
+	// Add songs to the playlist we just created
 	let add_track_data = await spotify_util.add_tracks_playlist(
 		tokens.access_token, 
-		playlist_data.id, uris, 
-		add_tracks_playlist_params.position);
+		playlist_data.id, 
+		uris, // URIS of songs to add to playlist
+		0 // Position to start adding songs (start of playlist)
+	);
 
-	res.send('Check your Spotify! A playlist has been created!');
+	res.send(song_names);
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
