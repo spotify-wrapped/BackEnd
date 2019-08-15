@@ -7,12 +7,5 @@
 
 	function onClick() {
 		let spotifyAuthWindow = window.open(authorizeUrl, 'spotifyAuthWindow', 'height=200,width=150');
-
-		spotifyAuthWindow.addEventListener('beforeunload', (event) => {
-			// Cancel the event as stated by the standard
-			event.preventDefault();
-			// Chrome requires returnValue to be set.
-			event.returnValue = '';
-		});
 	}
 </script>

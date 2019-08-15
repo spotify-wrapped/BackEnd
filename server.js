@@ -21,7 +21,6 @@ app.use(express.static(path.join(__dirname, '/public')));
 // Handlebars
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
- 
 
 // Serve handlebars welcome page to user and pass welcome page authorization url
 app.get('/', (req, res) => { 
