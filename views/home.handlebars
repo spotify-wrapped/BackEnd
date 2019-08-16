@@ -1,11 +1,19 @@
 <h1>Spotify Wrapped</h1>
-<a href={{authorizeUrl}}>Start</a>
-<button onClick="onClick()">Pop Up</button>
+<a href={{authorizeUrl}}>Direct Link</a>
+<button onClick="onClick()">Fix this pop up</button>
 
 <script>
+	// URL to Spotify user authorization 
 	const authorizeUrl = '{{{authorizeUrl}}}';
 
+	// Function used by spotify auth pop up to alert this window that the pop up has closed
+	function popUpClose(){
+		window.location.replace('http://localhost:3000/top');
+	}
+
+	// Opens spotify auth pop up
 	function onClick() {
-		let spotifyAuthWindow = window.open(authorizeUrl, 'spotifyAuthWindow', 'height=200,width=150');
+		let spotifyAuthWindow = window.open(authorizeUrl, 'spotifyAuthWindow', 'height=865,width=510');
+	
 	}
 </script>

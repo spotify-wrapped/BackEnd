@@ -1,16 +1,16 @@
 {{! 
-	Confirmation page Spotify semi-wrapped authorization pop-up
 	This page will close as soon as it is loaded and pass parent window the auth code if granted by user.
 }}
 
-<h1>Authorized</h1>
-
 <script>
-	// Get auth code from url
-	const authUrl = window.location.href;
-	const authUrlObject = new URL(authUrl);
-	const authCode = authUrlObject.searchParams.get('code');
+	// Store the access and refresh token in local storage so parent window can use
+	window.opener.sessionStorage.setItem('access_token', '{{{access_token}}}');
+	window.opener.sessionStorage.setItem('refresh_token', '{{{refresh_token}}}');
 	
-	window.opener.getAuthCode(authCode);
-	window.close()
+	// Alert parent window that this window closed by calling parent window function
+	window.onunload = () => {
+		window.opener.popUpClose();
+	};
+
+	window.close();
 </script>

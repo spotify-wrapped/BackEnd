@@ -61,10 +61,21 @@ app.get('/_callback', async(req, res) => {
 	console.log('hello world');
 });
 
-// {0m0}
+// Path for pop up. Try to store tokens in local storage to close the window
 app.get('/callback', async(req, res) => {
 	let authorization_code = req.query.code;
 	let tokens = await spotify_util.get_tokens(client_id, client_secret, authorization_code, redirect_uri);
+
+	// Data to pass to 'callback' page so it can be stored in local storage
+	const access_token = tokens.access_token;
+	const refresh_token = tokens.refresh_token;
+	res.render('callback', {
+		access_token,
+		refresh_token
+	});
+});
+
+app.get('_top', async(req, res) => {
 	let profile = await spotify_util.get_current_user(tokens.access_token);
 
 	// Get top songs by user
