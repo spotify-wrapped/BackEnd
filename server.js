@@ -56,11 +56,6 @@ app.get('/top', (req, res) => {
 	});
 });
 
-// Served after user authorizes account
-app.get('/_callback', async(req, res) => {
-	console.log('hello world');
-});
-
 // Path for pop up. Try to store tokens in local storage to close the window
 app.get('/callback', async(req, res) => {
 	let authorization_code = req.query.code;
@@ -75,6 +70,7 @@ app.get('/callback', async(req, res) => {
 	});
 });
 
+// Path for retrieving top 50 songs. Not in use but has useful code
 app.get('_top', async(req, res) => {
 	let profile = await spotify_util.get_current_user(tokens.access_token);
 
