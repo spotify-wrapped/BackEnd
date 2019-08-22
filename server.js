@@ -1,5 +1,8 @@
+let results = require('dotenv').config() // Library to load environment variables
+
 // Variables needed to retrieve spotify access tokens, which are used to make api request
-const client_id = '00dbb8102992441496cd4af8dc72d314';
+console.log(results);
+const client_id = process.env.client_id;
 const client_secret = '8634927c44de43e2a9ec61ab13fd3036';
 const redirect_uri = 'http://localhost:3000/callback';
 const scope = 'user-top-read playlist-modify-public playlist-modify-private user-read-private user-read-email user-read-birthdate';
