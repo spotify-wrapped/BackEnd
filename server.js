@@ -19,6 +19,7 @@ const port = process.env.PORT || 3000;
 
 // Middleware, server public
 app.use(helmet());
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/public')));
 
