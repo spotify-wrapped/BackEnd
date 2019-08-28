@@ -10,6 +10,7 @@ const express = require('express'); // Library for creating server
 const path = require('path');
 const helmet = require('helmet'); // Middleware for security
 const querystring = require('querystring'); // Library to parse and stringify URL query strings
+const bodyParser = require('body-parser'); // Middleware to parse post request
 const spotify_util = require('./spotify_util'); // Utility used to make spotify api calls
 
 const exphbs = require('express-handlebars');
@@ -18,6 +19,7 @@ const port = process.env.PORT || 3000;
 
 // Middleware, server public
 app.use(helmet());
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/public')));
 
 // Handlebars
@@ -56,6 +58,12 @@ app.get('/top', (req, res) => {
 		topArtist,
 		topSongs
 	});
+});
+
+app.post('/top', (req, res) => {
+	const { test } = req.body;
+	console.log(test);
+	res.send('success');
 });
 
 // Path for pop up. Try to store tokens in local storage to close the window

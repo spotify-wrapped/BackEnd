@@ -9,10 +9,14 @@
     </div>
 </div>
 
-<script>
-    function onClick() {
-        document.getElementById("a").innerHTML = "Hello World";
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
 
-        console.log('hi')
-    }
+<script>
+    $.post(
+        'localhost:3000/top',
+        {test: 'test data'},
+    );
 </script>
