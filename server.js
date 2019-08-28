@@ -62,7 +62,7 @@ app.get('/top', (req, res) => {
 
 app.post('/top', (req, res) => {
 	const { test } = req.body;
-	console.log(test);
+	console.log(`Data: ${req.body}`);
 	res.send('success');
 });
 
