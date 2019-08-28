@@ -17,7 +17,9 @@
 <script>
     $.post(
         'https://sheltered-reaches-35391.herokuapp.com/top',
-        {test: 'test data'},
-        (data, status) => console.log(`Success! Data: ${data}, Status: ${status}`);
+        {
+            test: 'test data'
+        },
+        (data, status) => console.log(`Success! Data: ${data}, Status: ${status}`)
     );
 </script>
