@@ -15,7 +15,7 @@
   crossorigin="anonymous"></script>
 
 <script>
-    const token = sessionStorage.get('access_token');
+    const token = sessionStorage.getItem('access_token');
     $.post(
         'https://sheltered-reaches-35391.herokuapp.com/top',
         {
