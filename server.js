@@ -66,14 +66,21 @@ app.post('/top', (req, res) => {
 
 	if(!token) res.status(400).send('Invalid token');
 
-	const topSongs = spotify_util.get_top(
-		token,
-		'tracks', // Type of 'top' list to retrieve 
-		50, // Limit of tracks to get 
-		0, // Offset in 'top' list to retrieve from (0 = start) 
-		'short_term' // Time range of top tracks to retrieve from (4 weeks)
-	);
-	res.send(topSongs);
+
+	try {
+		const topSongs = await spotify_util.get_top(
+			token,
+			'tracks', // Type of 'top' list to retrieve 
+			50, // Limit of tracks to get 
+			0, // Offset in 'top' list to retrieve from (0 = start) 
+			'short_term' // Time range of top tracks to retrieve from (4 weeks)
+		);
+		res.send(topSongs);
+
+	}catch(err) {
+		console.log(err);
+		res.status(400).send(err);
+	}
 });
 
 // Path for pop up. Try to store tokens in local storage to close the window
@@ -91,46 +98,53 @@ app.get('/callback', async(req, res) => {
 });
 
 // Path for retrieving top 50 songs. Not in use but has useful code
-app.get('_top', async(req, res) => {
-	let profile = await spotify_util.get_current_user(tokens.access_token);
+app.post('/createPlaylist', async(req, res) => {
+	const { token } = req.body;
 
-	// Get top songs by user
-	let songs_data = await spotify_util.get_top(
-		tokens.access_token, 
-		'tracks', // Type of 'top' list to retrieve 
-		50, // Limit of tracks to get 
-		0, // Offset in 'top' list to retrieve from (0 = start) 
-		'short_term' // Time range of top tracks to retrieve from (4 weeks)
-	);
+	try {
+		let profile = await spotify_util.get_current_user(token);
 
-	// Get array of song uris from the song_data
-	let song_names = []; // Used to display user the top songs in clean way
-	let uris = [];
-	console.log(songs_data);
-	for(song of songs_data.items){
-		uris.push(song.uri)
-		song_names.push(song.name);
+		// Get top songs by user
+		let songs_data = await spotify_util.get_top(
+			token, 
+			'tracks', // Type of 'top' list to retrieve 
+			50, // Limit of tracks to get 
+			0, // Offset in 'top' list to retrieve from (0 = start) 
+			'short_term' // Time range of top tracks to retrieve from (4 weeks)
+		);
+
+		// Get array of song uris from the song_data
+		let song_names = []; // Used to display user the top songs in clean way
+		let uris = [];
+		console.log(songs_data);
+		for(song of songs_data.items){
+			uris.push(song.uri)
+			song_names.push(song.name);
+		}
+
+		// Create EMPTY playlist for the user
+		let playlist_data = await spotify_util.create_playlist(
+			token, 
+			profile.id, // User id to add the playlist to 
+			'Top 50 Past 4 Weeks', // Name of the playlist 
+			true, // Boolean for public access to playlist 
+			false, // Boolean for collaborative playlist 
+			'["_"]' // Description of the playlist
+		);
+
+		// Add songs to the playlist we just created
+		let add_track_data = await spotify_util.add_tracks_playlist(
+			token, 
+			playlist_data.id, 
+			uris, // URIS of songs to add to playlist
+			0 // Position to start adding songs (start of playlist)
+		);
+
+		res.status(200).send(song_names);
+	}catch(err) {
+		console.log(err);
+		res.status(400).send(err);
 	}
-
-	// Create EMPTY playlist for the user
-	let playlist_data = await spotify_util.create_playlist(
-		tokens.access_token, 
-		profile.id, // User id to add the playlist to 
-		'Top 50 Past 4 Weeks', // Name of the playlist 
-		true, // Boolean for public access to playlist 
-		false, // Boolean for collaborative playlist 
-		'["_"]' // Description of the playlist
-	);
-
-	// Add songs to the playlist we just created
-	let add_track_data = await spotify_util.add_tracks_playlist(
-		tokens.access_token, 
-		playlist_data.id, 
-		uris, // URIS of songs to add to playlist
-		0 // Position to start adding songs (start of playlist)
-	);
-
-	res.send(song_names);
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
