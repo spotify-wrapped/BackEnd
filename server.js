@@ -19,7 +19,7 @@ const port = process.env.PORT || 3000;
 
 // Middleware, server public
 app.use(helmet());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: true}));	
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/public')));
 
@@ -62,9 +62,18 @@ app.get('/top', (req, res) => {
 });
 
 app.post('/top', (req, res) => {
-	const { test } = req.body;
-	console.log(req.body);
-	res.send('success');
+	const { token } = req.body;
+
+	if(!token) res.status(400).send('Invalid token');
+
+	const topSongs = spotify_util.get_top(
+		token,
+		'tracks', // Type of 'top' list to retrieve 
+		50, // Limit of tracks to get 
+		0, // Offset in 'top' list to retrieve from (0 = start) 
+		'short_term' // Time range of top tracks to retrieve from (4 weeks)
+	);
+	res.send(topSongs);
 });
 
 // Path for pop up. Try to store tokens in local storage to close the window

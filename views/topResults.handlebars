@@ -15,11 +15,14 @@
   crossorigin="anonymous"></script>
 
 <script>
+    const token = sessionStorage.get('access_token');
     $.post(
         'https://sheltered-reaches-35391.herokuapp.com/top',
         {
-            test: 'test data'
+            token
         },
-        (data, status) => console.log(`Success! Data: ${data}, Status: ${status}`)
+        (data, status) => {
+            console.log(`Success! Data: ${data}, Status: ${status}`);
+        }
     );
 </script>
