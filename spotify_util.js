@@ -1,7 +1,7 @@
 const axios = require('axios'); // Library to make HTTP request
 const querystring = require('querystring'); //Library to parse and stringify URL query strings
 
-let get_tokens = (client_id, client_secret, authorization_code, redirect_uri) => {
+let get_tokens = async (client_id, client_secret, authorization_code, redirect_uri) => {
 	let endpoint = 'https://accounts.spotify.com/api/token';
 	let params = { // Body for post request for tokens
 		grant_type: 'authorization_code',
@@ -16,21 +16,22 @@ let get_tokens = (client_id, client_secret, authorization_code, redirect_uri) =>
 			'Content-Type': 'application/x-www-form-urlencoded'
 		};
 
-	return axios({ 
-		method: 'post',
-		url: endpoint,
-		params : params,
-		headers: headers
-	})
-		.then(res => {
-			return res.data;
-		})
-		.catch(err => {
-			return err
+	try {
+		const response = await axios({ 
+			method: 'post',
+			url: endpoint,
+			params : params,
+			headers: headers
 		});
+		return response.data;
+
+	}catch(err) {
+		console.log(err);
+		return err;
+	}
 };
 
-let get_top = (access_token, type, limit, offset, time_range) => {
+let get_top = async (access_token, type, limit, offset, time_range) => {
 	let endpoint = 'https://api.spotify.com/v1/me/top/' + type + '?';
 
 	let headers = {
@@ -42,20 +43,21 @@ let get_top = (access_token, type, limit, offset, time_range) => {
 		time_range: time_range
 	};
 
-	return axios({
-		method: 'get',
-		url: endpoint + querystring.stringify(params),
-		headers: headers
-	})
-		.then(res => {
-			return res.data;
-		})
-		.catch(err => {
-			return err;
+	try {
+		const response = await axios({
+			method: 'get',
+			url: endpoint + querystring.stringify(params),
+			headers: headers
 		});
+		return response.data;
+
+	}catch(err) {
+		console.log(err);
+		return err;
+	}
 };
 
-let create_playlist = (access_token, user_id, playlist_name, public_access, collaborative, description) => {
+let create_playlist = async (access_token, user_id, playlist_name, public_access, collaborative, description) => {
 	let endpoint = 'https://api.spotify.com/v1/users/' + user_id + '/playlists';
 
 	let headers = {
@@ -70,41 +72,43 @@ let create_playlist = (access_token, user_id, playlist_name, public_access, coll
 		description: description
 	};
 
-	return axios({
-		method: 'post',
-		url: endpoint,
-		data: data,
-		headers: headers 
-	})
-		.then(res => {
-			return res.data; // Return information of the playlist
-		})
-		.catch(err => {
-			return err;
+	try{
+		const response = await axios({
+			method: 'post',
+			url: endpoint,
+			data: data,
+			headers: headers 
 		});
+		return response.data; // Return information of the playlist
+
+	}catch(err) {
+		console.log(err);
+		return err;
+	}
 };
 
-let get_current_user = (access_token) => {
+let get_current_user = async (access_token) => {
 	let endpoint = 'https://api.spotify.com/v1/me';
 
 	let headers = {
 		Authorization: 'Bearer ' + access_token 
 	};
 
-	return axios({
-		method: 'get',
-		url: endpoint,
-		headers: headers
-	})
-		.then(res => {
-			return res.data;
-		})
-		.catch(err => {
-			return err;
-		})
+	try {
+		const response = await axios({
+			method: 'get',
+			url: endpoint,
+			headers: headers
+		});
+		return response.data;
+
+	}catch(err) {
+		console.log(err);
+		return err;
+	}
 };
 
-let add_tracks_playlist = (access_token, playlist_id, uris, position) => {
+let add_tracks_playlist = async (access_token, playlist_id, uris, position) => {
 	let endpoint = 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks';
 
 	let headers = {
@@ -117,18 +121,19 @@ let add_tracks_playlist = (access_token, playlist_id, uris, position) => {
 		position: position
 	};
 
-	return axios({
-		method: 'post',
-		url: endpoint,
-		data: data,
-		headers: headers
-	})
-		.then(res => {
-			return res;
-		})
-		.catch(err => {
-			return err;
+	try {
+		const response = await axios({
+			method: 'post',
+			url: endpoint,
+			data: data,
+			headers: headers
 		});
+		return response;
+
+	}catch(err) {
+		console.log(err);
+		return err;
+	}
 };
 
 module.exports = {
