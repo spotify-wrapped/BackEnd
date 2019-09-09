@@ -61,7 +61,7 @@ app.get('/top', (req, res) => {
 	});
 });
 
-app.post('/top', (req, res) => {
+app.post('/top', async(req, res) => {
 	const { token } = req.body;
 
 	if(!token) res.status(400).send('Invalid token');
