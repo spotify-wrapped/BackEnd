@@ -1,36 +1,33 @@
-let results = require('dotenv').config() // Library to load environment variables
+let results = require('dotenv').config()
 
-// Variables needed to retrieve spotify access tokens, which are used to make api request
 const client_id = process.env.client_id;
 const client_secret = process.env.client_secret;
 const redirect_uri = process.env.redirect_uri;
 const scope = process.env.scope;
 
-const express = require('express'); // Library for creating server 
+const express = require('express'); 
 const path = require('path');
-const helmet = require('helmet'); // Middleware for security
-const querystring = require('querystring'); // Library to parse and stringify URL query strings
-const bodyParser = require('body-parser'); // Middleware to parse post request
-const spotify_util = require('./spotify_util'); // Utility used to make spotify api calls
+const helmet = require('helmet'); 
+const querystring = require('querystring'); 
+const bodyParser = require('body-parser'); 
+const spotify_util = require('./spotify_util'); 
 
-const exphbs = require('express-handlebars');
+const exphbs = require('express-handlebars'); 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware, server public
 app.use(helmet());
 app.use(bodyParser.urlencoded({extended: true}));	
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/public')));
 
-// Handlebars
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
-// Serve handlebars welcome page to user and pass welcome page authorization url
+// Home page with access to auth url
 app.get('/', (req, res) => { 
-	let endpoint = 'https://accounts.spotify.com/authorize?';
-	let params = { // Parameters for authorization request
+	let authEndpoint = 'https://accounts.spotify.com/authorize?';
+	let authParams = {
 		client_id: client_id,
 		redirect_uri: redirect_uri,
 		scope: scope,
@@ -38,21 +35,31 @@ app.get('/', (req, res) => {
 		response_type: 'code'
 	};
 
-	let authorizeUrl = endpoint + querystring.stringify(params);
+	let authUrl = authEndpoint + querystring.stringify(authParams);
 
-    // Inject 'home' view into 'main' body, add helper mathod
-	res.render('home', { authorizeUrl });
+	res.render('home', { authUrl });
+});
+
+// Path used for auth pop up. Stores access/refresh tokens in session storage 
+app.get('/callback', async(req, res) => {
+	let authorization_code = req.query.code;
+	let tokens = await spotify_util.get_tokens(client_id, client_secret, authorization_code, redirect_uri);
+
+	const access_token = tokens.access_token;
+	const refresh_token = tokens.refresh_token;
+	res.render('callback', {
+		access_token,
+		refresh_token
+	});
 });
 
 // Return handlebars page to user with top artist/songs data
 app.get('/top', (req, res) => {
-	// Data to pass to 'home'
-	const css = [ 'top' ];
-	const imageUrl = 'https://media.wired.com/photos/5927001eaf95806129f51539/master/w_902,c_limit/spotify-logo-zoom-s.jpg';
-	const topArtist = 'top artist';
-	const topSongs = 'top songs';
+	let css = [ 'top' ];
+	let imageUrl = 'https://media.wired.com/photos/5927001eaf95806129f51539/master/w_902,c_limit/spotify-logo-zoom-s.jpg';
+	let topArtist = 'top artist';
+	let topSongs = 'top songs';
 
-	// Inject 'home' view into 'main' body, add helper mathod
 	res.render('topResults', {
 		css,
 		imageUrl,
@@ -61,15 +68,13 @@ app.get('/top', (req, res) => {
 	});
 });
 
+// Give client data of top 50 songs 
 app.post('/top', async(req, res) => {
-	const { token } = req.body;
-
-	if(!token) res.status(400).send('Invalid token');
-
-
+	const { accessToken } = req.body;
+	if(!accessToken) res.status(400).send('Invalid token');
 	try {
 		const topSongs = await spotify_util.get_top(
-			token,
+			accessToken,
 			'tracks', // Type of 'top' list to retrieve 
 			50, // Limit of tracks to get 
 			0, // Offset in 'top' list to retrieve from (0 = start) 
@@ -83,21 +88,7 @@ app.post('/top', async(req, res) => {
 	}
 });
 
-// Path for pop up. Try to store tokens in local storage to close the window
-app.get('/callback', async(req, res) => {
-	let authorization_code = req.query.code;
-	let tokens = await spotify_util.get_tokens(client_id, client_secret, authorization_code, redirect_uri);
-
-	// Data to pass to 'callback' page so it can be stored in local storage
-	const access_token = tokens.access_token;
-	const refresh_token = tokens.refresh_token;
-	res.render('callback', {
-		access_token,
-		refresh_token
-	});
-});
-
-// Path for retrieving top 50 songs. Not in use but has useful code
+// Not in use
 app.post('/createPlaylist', async(req, res) => {
 	const { token } = req.body;
 

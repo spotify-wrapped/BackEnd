@@ -3,13 +3,11 @@
 }}
 
 <script>
-	// Store the access and refresh token in local storage so parent window can use
-	window.opener.sessionStorage.setItem('access_token', '{{{access_token}}}');
-	window.opener.sessionStorage.setItem('refresh_token', '{{{refresh_token}}}');
+	window.opener.sessionStorage.setItem('accessToken', '{{{access_token}}}');
+	window.opener.sessionStorage.setItem('refreshToken', '{{{refresh_token}}}');
 	
-	// Alert parent window that this window closed by calling parent window function
 	window.onunload = () => {
-		window.opener.popUpClose();
+		window.opener.redirect();
 	};
 
 	window.close();

@@ -1,18 +1,15 @@
 <h1>Spotify Wrapped</h1>
-<a href={{authorizeUrl}}>Direct Link</a>
-<button onClick="onClick()">Fix this pop up</button>
+<a href={{authUrl}}>Direct Link</a>
+<button onClick="authOnClick()">Authorize</button>
 
 <script>
-	// URL to Spotify user authorization 
-	const authorizeUrl = '{{{authorizeUrl}}}';
+	const authUrl = '{{{authUrl}}}';
 
-	// Function used by spotify auth pop up to alert this window that the pop up has closed
-	function popUpClose(){
+	function redirect(){
 		window.location.replace('https://sheltered-reaches-35391.herokuapp.com/top');
 	}
 
-	// Opens spotify auth pop up
-	function onClick() {
-		let spotifyAuthWindow = window.open(authorizeUrl, 'spotifyAuthWindow', 'height=865,width=510');
+	function authOnClick() {
+		let spotifyAuthWindow = window.open(authUrl, 'spotifyAuthWindow', 'height=865,width=510');
 	}
 </script>

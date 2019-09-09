@@ -16,15 +16,15 @@
 </script>
 
 <script>
-    const token = sessionStorage.getItem('access_token');
+    const accessToken = sessionStorage.getItem('accessToken');
     $.post(
         'https://sheltered-reaches-35391.herokuapp.com/top',
         {
-            token
+            accessToken
         },
-        (data, status) => {
-            console.log(`Success! Data: ${data}, Status: ${status}`);
-            console.log(JSON.stringify(data));
+        (songsData, status) => {
+            console.log(`Success! Data: ${songsData}, Status: ${status}`);
+            console.log(JSON.stringify(songsData));
         }
     );
 </script>
