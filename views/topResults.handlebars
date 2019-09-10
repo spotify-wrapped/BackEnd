@@ -2,7 +2,7 @@
     <div class="container">
         <img src={{imageUrl}} class="image" height="100" width="100"/>
         <div class="text">
-            <h1>{{topArtist}}</h1>
+            <h1 id="topArtists">{{topArtist}}</h1>
             <br/>
             <h1>{{topAlbum}}</h1>
         </div>
@@ -16,18 +16,56 @@
   crossorigin="anonymous">
 </script>
 
+
+<!-- Main -->
 <script>
     const accessToken = sessionStorage.getItem('accessToken');
-    $.post(
-        '{{{host}}}' + '/top',
-        {
-            accessToken
-        },
-        (songsData, status) => {
-            console.log(`Songs Data retrieved! Data: ${songsData}, Status: ${status}`);
-        }
-    );
 
+    getTopTrackData();
+    async function getTopTrackData() {
+        try {
+
+            const { items: tracks } = await $.post('{{{host}}}' + '/top', { accessToken });
+            
+            displayTrack(tracks);
+            analyzeTracks(tracks);
+
+        }catch(err) {
+            console.log(err);
+        }
+    }
+
+</script>
+
+<script>
+    function analyzeTracks(tracks) {
+
+        tracks.forEach(track => {
+            // Data for future analysis / queries
+            const { explicit, id, popularity } = track;
+
+        });
+        
+    }
+
+    function displayTracks(track){
+        $(document).ready(function(){
+            tracks.forEach(track => {
+                const { album, artists, id, name } = track;
+                const { name: albumName } = album;
+                const albumArt = album.images[1];
+
+                $("#topArtists").append('<div id='+id+'></div>');
+                $(`#${id}`).append('<p>Name: '+name+' | Album: '+albumName+'</p>');
+                $(`#${id}`).append(`<img src=${albumArt.url} height=100/>`);
+                console.log(albumArt);
+                artists.forEach(artist => $(`#${id}`).append(artist));
+            });
+        });
+    }
+</script>
+
+<script>
     function createPlaylist(){
         $.post(
         '{{{host}}}' + '/createPlaylist',
