@@ -1,7 +1,7 @@
 <div class="card">
     <div class="container">
         <img src={{imageUrl}} class="image" height="100" width="100"/>
-        <div class="text">
+        <div id="main" class="text">
             <h1 id="topArtists">{{topArtist}}</h1>
             <br/>
             <h1>{{topAlbum}}</h1>
@@ -32,6 +32,7 @@
 
         }catch(err) {
             console.log(err);
+            $("#main").append('<div>Please refresh page</div>');
         }
     }
 
