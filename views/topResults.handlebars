@@ -58,8 +58,9 @@
                 $("#topArtists").append('<div id='+id+'></div>');
                 $(`#${id}`).append('<p>Name: '+name+' | Album: '+albumName+'</p>');
                 $(`#${id}`).append(`<img src=${albumArt.url} height=100/>`);
-                console.log(albumArt);
-                artists.forEach(artist => $(`#${id}`).append(artist));
+                artists.forEach(artist => {
+                    $(`#${id}`).append(artist.name)
+                });
             });
         });
     }
