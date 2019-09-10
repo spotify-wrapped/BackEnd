@@ -27,7 +27,7 @@
 
             const { items: tracks } = await $.post('{{{host}}}' + '/top', { accessToken });
             
-            displayTrack(tracks);
+            displayTracks(tracks);
             analyzeTracks(tracks);
 
         }catch(err) {
@@ -48,7 +48,7 @@
         
     }
 
-    function displayTracks(track){
+    function displayTracks(tracks){
         $(document).ready(function(){
             tracks.forEach(track => {
                 const { album, artists, id, name } = track;
