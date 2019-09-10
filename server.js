@@ -4,6 +4,7 @@ const client_id = process.env.client_id;
 const client_secret = process.env.client_secret;
 const redirect_uri = process.env.redirect_uri;
 const scope = process.env.scope;
+const host = process.env.host;
 
 const express = require('express'); 
 const path = require('path');
@@ -37,7 +38,11 @@ app.get('/', (req, res) => {
 
 	let authUrl = authEndpoint + querystring.stringify(authParams);
 
-	res.render('home', { authUrl });
+	res.render('home', { 
+		authUrl,
+		redirect_uri,
+		host 
+	});
 });
 
 // Path used for auth pop up. Stores access/refresh tokens in session storage 
@@ -64,7 +69,8 @@ app.get('/top', (req, res) => {
 		css,
 		imageUrl,
 		topArtist,
-		topSongs
+		topSongs,
+		host
 	});
 });
 
@@ -88,50 +94,43 @@ app.post('/top', async(req, res) => {
 	}
 });
 
-// Not in use
+// Create playlist on user's spotify account of top 50 songs
 app.post('/createPlaylist', async(req, res) => {
-	const { token } = req.body;
+	let { accessToken } = req.body;
 
 	try {
-		let profile = await spotify_util.get_current_user(token);
+		let profile = await spotify_util.get_current_user(accessToken);
 
-		// Get top songs by user
 		let songs_data = await spotify_util.get_top(
-			token, 
+			accessToken, 
 			'tracks', // Type of 'top' list to retrieve 
 			50, // Limit of tracks to get 
 			0, // Offset in 'top' list to retrieve from (0 = start) 
 			'short_term' // Time range of top tracks to retrieve from (4 weeks)
 		);
 
-		// Get array of song uris from the song_data
-		let song_names = []; // Used to display user the top songs in clean way
-		let uris = [];
-		console.log(songs_data);
+		let songUris = [];
 		for(song of songs_data.items){
-			uris.push(song.uri)
-			song_names.push(song.name);
+			songUris.push(song.uri)
 		}
 
-		// Create EMPTY playlist for the user
 		let playlist_data = await spotify_util.create_playlist(
-			token, 
+			accessToken, 
 			profile.id, // User id to add the playlist to 
 			'Top 50 Past 4 Weeks', // Name of the playlist 
 			true, // Boolean for public access to playlist 
 			false, // Boolean for collaborative playlist 
 			'["_"]' // Description of the playlist
 		);
-
-		// Add songs to the playlist we just created
+	
 		let add_track_data = await spotify_util.add_tracks_playlist(
-			token, 
+			accessToken, 
 			playlist_data.id, 
-			uris, // URIS of songs to add to playlist
+			songUris, // URIS of songs to add to playlist
 			0 // Position to start adding songs (start of playlist)
 		);
 
-		res.status(200).send(song_names);
+		res.status(200).send();
 	}catch(err) {
 		console.log(err);
 		res.status(400).send(err);

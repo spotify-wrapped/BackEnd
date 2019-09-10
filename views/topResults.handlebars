@@ -8,6 +8,7 @@
         </div>
     </div>
 </div>
+<button onClick="createPlaylist()">Create Playlist</button>
 
 <script
   src="https://code.jquery.com/jquery-3.4.1.min.js"
@@ -18,13 +19,24 @@
 <script>
     const accessToken = sessionStorage.getItem('accessToken');
     $.post(
-        'https://sheltered-reaches-35391.herokuapp.com/top',
+        '{{{host}}}' + '/top',
         {
             accessToken
         },
         (songsData, status) => {
-            console.log(`Success! Data: ${songsData}, Status: ${status}`);
-            console.log(JSON.stringify(songsData));
+            console.log(`Songs Data retrieved! Data: ${songsData}, Status: ${status}`);
         }
     );
+
+    function createPlaylist(){
+        $.post(
+        '{{{host}}}' + '/createPlaylist',
+        {
+            accessToken
+        },
+        (data, status) => {
+            console.log(`Playlist Created! Data: ${data}, Status: ${status}`);
+        }
+    );
+    }
 </script>
