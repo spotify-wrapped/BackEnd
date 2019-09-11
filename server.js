@@ -137,4 +137,29 @@ app.post('/createPlaylist', async(req, res) => {
 	}
 });
 
+app.post('/get-tracks', async(req, res) => {
+	const { accessToken, trackIds } = req.body;
+
+	try {
+		let tracks = await spotify_util.get_tracks(accessToken, trackIds);
+
+		res.send(tracks);
+	}catch(err) {
+		console.log(err);
+		res.send(err);
+	}
+});
+app.post('/get-multi-audio-features', async(req, res) => {
+	const { accessToken, trackIds } = req.body;
+
+	try {
+		let audioFeatures = await spotify_util.get_multi_audio_features(accessToken, trackIds);
+
+		res.send(audioFeatures);
+	}catch(err) {
+		console.log(err);
+		res.send(err);
+	}
+});
+
 app.listen(port, () => console.log(`Listening on port ${port}`));

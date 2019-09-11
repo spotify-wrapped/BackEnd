@@ -25,10 +25,13 @@
     async function getTopTrackData() {
         try {
 
-            const { items: tracks } = await $.post('{{{host}}}' + '/top', { accessToken });
+            const { items: topTracks } = await $.post('{{{host}}}' + '/top', { accessToken });
             
-            displayTracks(tracks);
-            analyzeTracks(tracks);
+            displayTracks(topTracks);
+
+            const allTrackFeatures = await getAllTrackFeatures(topTracks);
+            console.log(allTrackFeatures)
+            analyzeTrackFeatures(allTrackFeatures);
 
         }catch(err) {
             console.log(err);
@@ -39,19 +42,61 @@
 </script>
 
 <script>
-    function analyzeTracks(tracks) {
+    async function getAllTrackFeatures(tracks) {
+        let trackIds = [];
+        tracks.forEach(track => trackIds.push(track.id));
 
-        tracks.forEach(track => {
-            // Data for future analysis / queries
-            const { explicit, id, popularity } = track;
+        try {
+            const { audio_features: audioFeatures } = await $.post('{{{host}}}' + '/get-multi-audio-features',
+            {
+                accessToken,
+                trackIds
+            });
 
-        });
+            let trackFeatures = [];
+            audioFeatures.forEach((audioFeature, i) => {
+                const { acousticness, danceability, energy, id, liveness, loudness, speechiness, tempo, valence } = audioFeature;
+                const { explicit, popularity } = tracks[i];
+
+                const trackFeature = {
+                    acousticness,
+                    danceability,
+                    energy,
+                    id,
+                    liveness,
+                    loudness,
+                    speechiness,
+                    tempo,
+                    valence,
+                    explicit,
+                    popularity
+                };
+                trackFeatures.push(trackFeature);
+            });
+
+            return trackFeatures;
+
+        }catch(err) {
+            console.log(err);
+        }
+    }
+
+    async function analyzeTrackFeatures(trackFeatures) {
+        try{
+
+            {{!-- trackFeatures.forEach(trackFeature => {
+                // Data for future analysis / queries
+
+            }); --}}
+        }catch(err) {
+            console.log(err);
+        }
         
     }
 
-    function displayTracks(tracks){
+    function displayTracks(topTracks){
         $(document).ready(function(){
-            tracks.forEach(track => {
+            topTracks.forEach(track => {
                 const { album, artists, id, name } = track;
                 const { name: albumName } = album;
                 const albumArt = album.images[1];
