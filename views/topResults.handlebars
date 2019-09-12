@@ -1,14 +1,3 @@
-{{!-- <div class="card">
-    <div class="container">
-        <img src={{imageUrl}} class="image" height="100" width="100"/>
-        <div id="main" class="text">
-            <h1 id="topArtists">{{topArtist}}</h1>
-            <br/>
-            <h1>{{topAlbum}}</h1>
-        </div>
-    </div>
-</div> --}}
-
 <button onClick="createPlaylist()">Create Playlist</button>
 
 <div>
@@ -130,5 +119,49 @@
             console.log(`Playlist Created! Data: ${data}, Status: ${status}`);
         }
     );
+    }
+</script>
+
+<!-- Fun fact funcitons here -->
+<script>
+    displayFacts();
+    async function displayFacts() {
+        try {
+            const { items: topTracks } = await $.post('{{{host}}}' + '/top', { accessToken });
+
+            let topAlbum = sharedAlbum(topTracks);
+            console.log('Your most played album was "' +  topAlbum.name + '" with a total of ' + topAlbum.numberOfSongs + ' songs!' );
+
+        }catch(err) {
+            console.log(err);
+            $("#main").append('<div>Please refresh page</div>');
+        }
+    }
+
+    function sharedAlbum(tracks) {
+        let albumNames = {}
+        tracks.forEach(function(track){
+            const { album } = track;
+            const { name } = album;
+            if (name in albumNames){
+                albumNames[name]++;
+            }
+            else{
+                albumNames[name] = 1;
+            }
+        });
+
+        let maxSongsFromAlbum = 0;
+        let maxAlbum;
+        for(album in albumNames){
+            if (albumNames[album] > maxSongsFromAlbum){
+                maxAlbum = album;
+                maxSongsFromAlbum = albumNames[album]; 
+            }
+        }
+        return {
+            name: maxAlbum,
+            numberOfSongs: maxSongsFromAlbum
+        }
     }
 </script>
