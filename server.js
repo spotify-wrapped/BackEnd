@@ -60,18 +60,7 @@ app.get('/callback', async(req, res) => {
 
 // Return handlebars page to user with top artist/songs data
 app.get('/top', (req, res) => {
-	let css = [ 'top' ];
-	let imageUrl = 'https://media.wired.com/photos/5927001eaf95806129f51539/master/w_902,c_limit/spotify-logo-zoom-s.jpg';
-	let topArtist = 'top artist';
-	let topSongs = 'top songs';
-
-	res.render('topResults', {
-		css,
-		imageUrl,
-		topArtist,
-		topSongs,
-		host
-	});
+	res.render('topResults');
 });
 
 // Give client data of top 50 songs 
@@ -149,6 +138,7 @@ app.post('/get-tracks', async(req, res) => {
 		res.send(err);
 	}
 });
+
 app.post('/get-multi-audio-features', async(req, res) => {
 	const { accessToken, trackIds } = req.body;
 

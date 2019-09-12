@@ -1,4 +1,4 @@
-<div class="card">
+{{!-- <div class="card">
     <div class="container">
         <img src={{imageUrl}} class="image" height="100" width="100"/>
         <div id="main" class="text">
@@ -7,8 +7,14 @@
             <h1>{{topAlbum}}</h1>
         </div>
     </div>
-</div>
+</div> --}}
+
 <button onClick="createPlaylist()">Create Playlist</button>
+
+<div>
+    <h1>Top Songs</h1>
+    <div id='topSongs'></div>
+</div>
 
 <script
   src="https://code.jquery.com/jquery-3.4.1.min.js"
@@ -16,8 +22,26 @@
   crossorigin="anonymous">
 </script>
 
-
 <!-- Main -->
+<script>
+    function displayTracks(topTracks){
+        $(document).ready(function(){
+            topTracks.forEach(track => {
+                const { album, artists, id, name } = track;
+                const { name: albumName } = album;
+                const albumArt = album.images[1];
+
+                $("#topSongs").append('<div id='+id+'></div>');
+                $(`#${id}`).append('<p>Name: '+name+' | Album: '+albumName+'</p>');
+                artists.forEach(artist => {
+                    $(`#${id}`).append('<p>Artist: ' +artist.name+ '</p>')
+                });
+                $(`#${id}`).append(`<img src=${albumArt.url} height=75/>`);
+            });
+        });
+    }
+</script>
+
 <script>
     const accessToken = sessionStorage.getItem('accessToken');
 
@@ -92,23 +116,6 @@
             console.log(err);
         }
         
-    }
-
-    function displayTracks(topTracks){
-        $(document).ready(function(){
-            topTracks.forEach(track => {
-                const { album, artists, id, name } = track;
-                const { name: albumName } = album;
-                const albumArt = album.images[1];
-
-                $("#topArtists").append('<div id='+id+'></div>');
-                $(`#${id}`).append('<p>Name: '+name+' | Album: '+albumName+'</p>');
-                $(`#${id}`).append(`<img src=${albumArt.url} height=100/>`);
-                artists.forEach(artist => {
-                    $(`#${id}`).append(artist.name)
-                });
-            });
-        });
     }
 </script>
 
