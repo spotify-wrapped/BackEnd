@@ -152,4 +152,19 @@ app.post('/get-multi-audio-features', async(req, res) => {
 	}
 });
 
+app.post('/getArtists', async(req, res) => {
+	const { accessToken, artistIds } = req.body;
+
+	console.log(artistIds.length);
+
+	try {
+		let artists = await spotify_util.get_artists(accessToken, artistIds);
+
+		res.send(artists);
+	}catch(err) {
+		console.log(err);
+		res.send(err);
+	}
+});
+
 app.listen(port, () => console.log(`Listening on port ${port}`));

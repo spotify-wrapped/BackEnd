@@ -185,6 +185,31 @@ let get_multi_audio_features = async (access_token, trackIds) => {
 	}
 };
 
+let get_artists = async (access_token, artistIds) => {
+	let endpoint = 'https://api.spotify.com/v1/artists?';
+	
+	let headers = {
+		Authorization: 'Bearer ' + access_token
+	}; 
+	
+	let params = { // Parameters for api request
+		ids: artistIds.toString()
+	};
+
+	try {
+		const response = await axios({
+			method: 'get',
+			url: endpoint + querystring.stringify(params),
+			headers: headers
+		});
+		return response.data;
+
+	}catch(err) {
+		console.log(err);
+		return err;
+	}
+};
+
 module.exports = {
 	get_tokens: get_tokens,
 	get_top: get_top,
@@ -192,5 +217,6 @@ module.exports = {
 	get_current_user: get_current_user,
 	add_tracks_playlist: add_tracks_playlist,
 	get_tracks,
-	get_multi_audio_features
+	get_multi_audio_features,
+	get_artists
 };

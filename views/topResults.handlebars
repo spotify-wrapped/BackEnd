@@ -129,20 +129,21 @@
         try {
             const { items: topTracks } = await $.post('{{{host}}}' + '/top', { accessToken });
 
-            let topAlbum = sharedAlbum(topTracks);
+            let topAlbum = getTopAlbum(topTracks);
             console.log('Your most played album was "' +  topAlbum.name + '" with a total of ' + topAlbum.numberOfSongs + ' songs!' );
 
+            topGenre(topTracks);
         }catch(err) {
             console.log(err);
             $("#main").append('<div>Please refresh page</div>');
         }
     }
 
-    function sharedAlbum(tracks) {
-        let albumNames = {}
+    function getTopAlbum(tracks) {
+        let albumNames = {};
         tracks.forEach(function(track){
-            const { album } = track;
-            const { name } = album;
+            let { album } = track;
+            let { name } = album;
             if (name in albumNames){
                 albumNames[name]++;
             }
@@ -163,5 +164,37 @@
             name: maxAlbum,
             numberOfSongs: maxSongsFromAlbum
         }
+    }
+
+    async function topGenre(tracks){
+        let artistsSet = new Set();
+        tracks.forEach(function(track){
+            let { artists } = track;
+            artists.forEach(function(artist){
+                artistsSet.add(artist.id);
+            });
+        });
+
+        let artistIds = [];
+        artistsSet.forEach(function(id){
+            artistIds.push(id);
+        });
+
+        const { artists: artistList } = await $.post('{{{host}}}' + '/getArtists', { accessToken, artistIds });
+
+        let genreCount = {};
+        artistList.forEach(function(artist){
+            let { genres } = artist;
+            genres.forEach(function(genre){
+                if(genre in genreCount){
+                    genreCount[genre]++;
+                }
+                else{
+                    genreCount[genre] = 1;
+                }
+            });
+        });
+        console.log(genreCount);
+
     }
 </script>
