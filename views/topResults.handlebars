@@ -132,7 +132,8 @@
             let topAlbum = getTopAlbum(topTracks);
             console.log('Your most played album was "' +  topAlbum.name + '" with a total of ' + topAlbum.numberOfSongs + ' songs!' );
 
-            topGenre(topTracks);
+            let topGenre = await getTopGenre(topTracks);
+            console.log('Your top genre was "' +  topGenre.topGenre + '" showing up on ' + topGenre.topGenreCount + ' songs!' );
         }catch(err) {
             console.log(err);
             $("#main").append('<div>Please refresh page</div>');
@@ -166,24 +167,25 @@
         }
     }
 
-    async function topGenre(tracks){
-        let artistsSet = new Set();
+    async function getTopGenre(tracks){
+        let artistIds = [];
         tracks.forEach(function(track){
             let { artists } = track;
             artists.forEach(function(artist){
-                artistsSet.add(artist.id);
+                artistIds.push(artist.id);
             });
         });
 
-        let artistIds = [];
-        artistsSet.forEach(function(id){
-            artistIds.push(id);
-        });
-
-        const { artists: artistList } = await $.post('{{{host}}}' + '/getArtists', { accessToken, artistIds });
+        let allArtists = [];
+        while(artistIds.length != 0){
+            let ids = artistIds.slice(0,50);
+            const { artists: artistList } = await $.post('{{{host}}}' + '/getArtists', { accessToken, ids });
+            allArtists = allArtists.concat(artistList);
+            artistIds.splice(0, 50);
+        }
 
         let genreCount = {};
-        artistList.forEach(function(artist){
+        allArtists.forEach(function(artist){
             let { genres } = artist;
             genres.forEach(function(genre){
                 if(genre in genreCount){
@@ -194,7 +196,18 @@
                 }
             });
         });
-        console.log(genreCount);
 
+        let topGenreCount = 0;
+        let topGenre = '';
+        for(genre in genreCount){
+            if (genreCount[genre] > topGenreCount){
+                topGenreCount = genreCount[genre];
+                topGenre = genre;
+            }
+        }
+        return {
+            topGenre,
+            topGenreCount
+        }
     }
 </script>

@@ -153,12 +153,10 @@ app.post('/get-multi-audio-features', async(req, res) => {
 });
 
 app.post('/getArtists', async(req, res) => {
-	const { accessToken, artistIds } = req.body;
-
-	console.log(artistIds.length);
+	const { accessToken, ids } = req.body;
 
 	try {
-		let artists = await spotify_util.get_artists(accessToken, artistIds);
+		let artists = await spotify_util.get_artists(accessToken, ids);
 
 		res.send(artists);
 	}catch(err) {
