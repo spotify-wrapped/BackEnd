@@ -58,12 +58,12 @@ app.get('/callback', async(req, res) => {
 	});
 });
 
-// Return handlebars page to user with top artist/songs data
+// Return handlebars page of their top results
 app.get('/top', (req, res) => {
 	res.render('topResults');
 });
 
-// Give client data of top 50 songs 
+// Return data of top 50 songs 
 app.post('/top', async(req, res) => {
 	const { accessToken } = req.body;
 	if(!accessToken) res.status(400).send('Invalid token');
@@ -126,6 +126,7 @@ app.post('/createPlaylist', async(req, res) => {
 	}
 });
 
+// Return data on multiple tracks based on track ids provided
 app.post('/get-tracks', async(req, res) => {
 	const { accessToken, trackIds } = req.body;
 
@@ -139,6 +140,7 @@ app.post('/get-tracks', async(req, res) => {
 	}
 });
 
+// Return audio features on multiple tracks based on track ids provided
 app.post('/get-multi-audio-features', async(req, res) => {
 	const { accessToken, trackIds } = req.body;
 
@@ -152,6 +154,7 @@ app.post('/get-multi-audio-features', async(req, res) => {
 	}
 });
 
+// Return data on artists based on artist ids provided
 app.post('/getArtists', async(req, res) => {
 	const { accessToken, ids } = req.body;
 
