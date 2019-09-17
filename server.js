@@ -4,7 +4,6 @@ const client_id = process.env.client_id;
 const client_secret = process.env.client_secret;
 const redirect_uri = process.env.redirect_uri;
 const scope = process.env.scope;
-const host = process.env.host;
 
 const express = require('express'); 
 const path = require('path');
@@ -41,7 +40,6 @@ app.get('/', (req, res) => {
 	res.render('home', { 
 		authUrl,
 		redirect_uri,
-		host 
 	});
 });
 
@@ -60,7 +58,9 @@ app.get('/callback', async(req, res) => {
 
 // Return handlebars page of their top results
 app.get('/top', (req, res) => {
-	res.render('topResults');
+	res.render('topResults', {
+		scripts: ['playlistAnalysis']
+	});
 });
 
 // Return data of top 50 songs 

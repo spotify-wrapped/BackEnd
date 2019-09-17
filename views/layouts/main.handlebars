@@ -12,6 +12,10 @@
 <body>
  
     {{{body}}}
+
+    {{#each scripts}}
+        <script type="text/javascript" src="/scripts/{{this}}.js"></script>
+    {{/each}}
  
 </body>
 </html>

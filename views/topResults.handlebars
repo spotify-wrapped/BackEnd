@@ -13,6 +13,25 @@
 
 <!-- Main -->
 <script>
+    const accessToken = sessionStorage.getItem('accessToken');
+
+    getTopTracks();
+    async function getTopTracks() {
+        try {
+
+            const { items: topTracks } = await $.post(window.location.origin + '/top', { accessToken });
+            
+            displayTracks(topTracks); 
+            displayAnalysis(topTracks); // This function is included in a seperate file. It is not visible here because it is loaded through handlebars server side
+
+        }catch(err) {
+            console.log(err);
+            $("#main").append('<div>Please refresh page</div>');
+        }
+    }
+</script>
+
+<script>
     function displayTracks(topTracks){
         $(document).ready(function(){
             topTracks.forEach(track => {
@@ -32,182 +51,15 @@
 </script>
 
 <script>
-    const accessToken = sessionStorage.getItem('accessToken');
-
-    getTopTrackData();
-    async function getTopTrackData() {
-        try {
-
-            const { items: topTracks } = await $.post('{{{host}}}' + '/top', { accessToken });
-            
-            displayTracks(topTracks);
-
-            const allTrackFeatures = await getAllTrackFeatures(topTracks);
-            console.log(allTrackFeatures)
-            analyzeTrackFeatures(allTrackFeatures);
-
-        }catch(err) {
-            console.log(err);
-            $("#main").append('<div>Please refresh page</div>');
-        }
-    }
-
-</script>
-
-<script>
-    async function getAllTrackFeatures(tracks) {
-        let trackIds = [];
-        tracks.forEach(track => trackIds.push(track.id));
-
-        try {
-            const { audio_features: audioFeatures } = await $.post('{{{host}}}' + '/get-multi-audio-features',
-            {
-                accessToken,
-                trackIds
-            });
-
-            let trackFeatures = [];
-            audioFeatures.forEach((audioFeature, i) => {
-                const { acousticness, danceability, energy, id, liveness, loudness, speechiness, tempo, valence } = audioFeature;
-                const { explicit, popularity } = tracks[i];
-
-                const trackFeature = {
-                    acousticness,
-                    danceability,
-                    energy,
-                    id,
-                    liveness,
-                    loudness,
-                    speechiness,
-                    tempo,
-                    valence,
-                    explicit,
-                    popularity
-                };
-                trackFeatures.push(trackFeature);
-            });
-
-            return trackFeatures;
-
-        }catch(err) {
-            console.log(err);
-        }
-    }
-
-    async function analyzeTrackFeatures(trackFeatures) {
-        try{
-
-            {{!-- trackFeatures.forEach(trackFeature => {
-                // Data for future analysis / queries
-
-            }); --}}
-        }catch(err) {
-            console.log(err);
-        }
-        
-    }
-</script>
-
-<script>
     function createPlaylist(){
         $.post(
-        '{{{host}}}' + '/createPlaylist',
-        {
-            accessToken
-        },
-        (data, status) => {
-            console.log(`Playlist Created! Data: ${data}, Status: ${status}`);
-        }
-    );
-    }
-</script>
-
-<!-- Fun fact funcitons here -->
-<script>
-    displayFacts();
-    async function displayFacts() {
-        try {
-            const { items: topTracks } = await $.post('{{{host}}}' + '/top', { accessToken });
-
-            let topAlbum = getTopAlbum(topTracks);
-            console.log('Your most played album was "' +  topAlbum.name + '" with a total of ' + topAlbum.numberOfSongs + ' songs!' );
-
-            let topGenre = await getTopGenre(topTracks);
-            console.log('Your top genre was "' +  topGenre.topGenre + '" showing up on ' + topGenre.topGenreCount + ' songs!' );
-        }catch(err) {
-            console.log(err);
-            $("#main").append('<div>Please refresh page</div>');
-        }
-    }
-
-    function getTopAlbum(tracks) {
-        let albumNames = {};
-        tracks.forEach(function(track){
-            let { album } = track;
-            let { name } = album;
-            if (name in albumNames){
-                albumNames[name]++;
+            window.location.origin + '/createPlaylist',
+            {
+                accessToken
+            },
+            (data, status) => {
+                console.log(`Playlist Created! Data: ${data}, Status: ${status}`);
             }
-            else{
-                albumNames[name] = 1;
-            }
-        });
-
-        let maxSongsFromAlbum = 0;
-        let maxAlbum;
-        for(album in albumNames){
-            if (albumNames[album] > maxSongsFromAlbum){
-                maxAlbum = album;
-                maxSongsFromAlbum = albumNames[album]; 
-            }
-        }
-        return {
-            name: maxAlbum,
-            numberOfSongs: maxSongsFromAlbum
-        }
-    }
-
-    async function getTopGenre(tracks){
-        let artistIds = [];
-        tracks.forEach(function(track){
-            let { artists } = track;
-            artists.forEach(function(artist){
-                artistIds.push(artist.id);
-            });
-        });
-
-        let allArtists = [];
-        while(artistIds.length != 0){
-            let ids = artistIds.slice(0,50);
-            const { artists: artistList } = await $.post('{{{host}}}' + '/getArtists', { accessToken, ids });
-            allArtists = allArtists.concat(artistList);
-            artistIds.splice(0, 50);
-        }
-
-        let genreCount = {};
-        allArtists.forEach(function(artist){
-            let { genres } = artist;
-            genres.forEach(function(genre){
-                if(genre in genreCount){
-                    genreCount[genre]++;
-                }
-                else{
-                    genreCount[genre] = 1;
-                }
-            });
-        });
-
-        let topGenreCount = 0;
-        let topGenre = '';
-        for(genre in genreCount){
-            if (genreCount[genre] > topGenreCount){
-                topGenreCount = genreCount[genre];
-                topGenre = genre;
-            }
-        }
-        return {
-            topGenre,
-            topGenreCount
-        }
+        );
     }
 </script>
