@@ -5,6 +5,9 @@ async function displayAnalysis(topTracks) {
 
         let topGenre = await getTopGenre(topTracks);
         console.log('Your top genre was "' +  topGenre.topGenre + '" showing up on ' + topGenre.topGenreCount + ' songs!' );
+
+        let topArtist = getTopArtist(topTracks);
+        console.log('Your top artist was "' +  topArtist.name + '" with a total of ' + topArtist.artistCount + ' songs!' );
     }catch(err) {
         console.log(err);
         $("#main").append('<div>Please refresh page</div>');
@@ -118,5 +121,32 @@ async function getTopGenre(tracks){
     return {
         topGenre,
         topGenreCount
+    }
+}
+
+function getTopArtist(tracks){
+    let artistCount = {};
+    tracks.forEach(function(track){
+        let { artists } = track;
+        for(artist of artists){
+            let name = artist.name;
+            if(name in artistCount){
+                artistCount[name] = artistCount[name] + 1;
+            } 
+            else artistCount[name] = 1;
+        }
+    });
+
+    let maxArtistCount = 0;
+    let topArtist;
+    for(artist in artistCount){
+        if (artistCount[artist] > maxArtistCount){
+            maxArtistCount = artistCount[artist];
+            topArtist = artist; 
+        }
+    }
+    return {
+        name: topArtist,
+        artistCount: maxArtistCount
     }
 }
