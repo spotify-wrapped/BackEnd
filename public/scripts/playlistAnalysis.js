@@ -66,17 +66,11 @@ function getTopAlbum(tracks) {
         }
     });
 
-    let maxSongsFromAlbum = 0;
-    let maxAlbum;
-    for(album in albumNames){
-        if (albumNames[album] > maxSongsFromAlbum){
-            maxAlbum = album;
-            maxSongsFromAlbum = albumNames[album]; 
-        }
-    }
+    let topAlbum = findMaxOfTable(albumNames);
+
     return {
-        name: maxAlbum,
-        numberOfSongs: maxSongsFromAlbum
+        name: topAlbum.maxName,
+        numberOfSongs: topAlbum.max
     }
 }
 
@@ -110,17 +104,11 @@ async function getTopGenre(tracks){
         });
     });
 
-    let topGenreCount = 0;
-    let topGenre = '';
-    for(genre in genreCount){
-        if (genreCount[genre] > topGenreCount){
-            topGenreCount = genreCount[genre];
-            topGenre = genre;
-        }
-    }
+    let topGenre = findMaxOfTable(genreCount);
+
     return {
-        topGenre,
-        topGenreCount
+        topGenre: topGenre.maxName,
+        topGenreCount: topGenre.max
     }
 }
 
@@ -137,16 +125,25 @@ function getTopArtist(tracks){
         }
     });
 
-    let maxArtistCount = 0;
-    let topArtist;
-    for(artist in artistCount){
-        if (artistCount[artist] > maxArtistCount){
-            maxArtistCount = artistCount[artist];
-            topArtist = artist; 
+    let topArtist = findMaxOfTable(artistCount);
+
+    return {
+        name: topArtist.maxName,
+        artistCount: topArtist.max
+    }
+}
+
+function findMaxOfTable(hashTable){
+    let max = 0;
+    let maxName = '';
+    for(element in hashTable){
+        if(hashTable[element] > max){
+            max = hashTable[element];
+            maxName = element; 
         }
     }
     return {
-        name: topArtist,
-        artistCount: maxArtistCount
+        max,
+        maxName
     }
 }
