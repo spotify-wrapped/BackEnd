@@ -6,9 +6,9 @@
 </div>
 
 <script
-  src="https://code.jquery.com/jquery-3.4.1.min.js"
-  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-  crossorigin="anonymous">
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous">
 </script>
 
 <!-- Main -->
@@ -24,6 +24,7 @@
             displayTracks(topTracks); 
             displayAnalysis(topTracks); // This function is included in a seperate file. It is not visible here because it is loaded through handlebars server side
 
+            featuresGraph(topTracks);
         }catch(err) {
             console.log(err);
             $("#main").append('<div>Please refresh page</div>');
@@ -61,5 +62,89 @@
                 console.log(`Playlist Created! Data: ${data}, Status: ${status}`);
             }
         );
+    }
+</script>
+
+<!-- Chart Testing -->
+<script 
+    src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js'>
+</script>
+
+<select id='audioFeature'>
+    <option value='acousticness'>Acousticness</option>
+    <option value='danceability' selected>Danceability</option>
+    <option value='energy'>Energy</option>
+    <option value='instrumentalness'>Instrumentalness</option>
+    <option value='liveness'>Liveness</option>
+    <option value='loudness'>Loudness</option>
+    <option value='speechiness'>Speechiness</option>
+    <option value='valence'>Valence</option>
+    <option value='tempo'>Tempo</option>
+</select>
+<canvas id='myChart'></canvas>
+
+<script>
+
+    async function featuresGraph(topTracks){
+        let trackFeatures = await getAllTrackFeatures(topTracks); // This function is included in the playlistAnalysis file
+        let datasets = {
+            acousticness: null,
+            danceability: null,
+            energy: null,
+            instrumentalness: null,
+            liveness: null,
+            loudness: null,
+            speechiness: null,
+            valence: null,
+            temp: null,
+        }
+        for(dataType in datasets){
+            let data = [];
+            let labels = [];
+            for(track of trackFeatures){
+                data.push(track[dataType]);
+                labels.push(track.name + ' - ' + track.artists.toString());
+            }
+            datasets[dataType] = {
+                data,
+                labels
+            }
+        }
+
+        let ctx = $('#myChart');
+        let chart = new Chart(ctx, {
+            type: 'bar',
+            data: {},
+            options:{
+                scales: {
+                    xAxes: [{
+                        display: false
+                    }]
+                },
+            }
+        });
+
+        $('#audioFeature').on('change', function(e){
+            let feature = $('#audioFeature :selected').val();
+            changeGraph(feature);
+        });
+
+        async function changeGraph(feature){
+            let labels = datasets[feature].labels;
+            let data = datasets[feature].data;
+
+            let barChartData = {
+                labels,
+                datasets: [
+                    {
+                        label: feature,
+                        data
+                    }
+                ]
+            };
+
+            chart.data = barChartData;
+            chart.update();
+        }
     }
 </script>

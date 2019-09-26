@@ -8,6 +8,7 @@ async function displayAnalysis(topTracks) {
 
         let topArtist = getTopArtist(topTracks);
         console.log('Your top artist was "' +  topArtist.name + '" with a total of ' + topArtist.artistCount + ' songs!' );
+
     }catch(err) {
         console.log(err);
         $("#main").append('<div>Please refresh page</div>');
@@ -27,10 +28,14 @@ async function getAllTrackFeatures(tracks) {
 
         let trackFeatures = [];
         audioFeatures.forEach((audioFeature, i) => {
-            const { acousticness, danceability, energy, id, liveness, loudness, speechiness, tempo, valence } = audioFeature;
-            const { explicit, popularity } = tracks[i];
+            let { acousticness, danceability, energy, id, liveness, loudness, speechiness, tempo, valence } = audioFeature;
+            let { explicit, popularity, name, artists } = tracks[i];
+            
+            artists = artists.map((artist) => artist.name);
 
             const trackFeature = {
+                name,
+                artists,
                 acousticness,
                 danceability,
                 energy,
@@ -133,6 +138,8 @@ function getTopArtist(tracks){
     }
 }
 
+
+// Helper function used in other functions
 function findMaxOfTable(hashTable){
     let max = 0;
     let maxName = '';
