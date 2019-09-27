@@ -84,7 +84,6 @@
 <canvas id='myChart'></canvas>
 
 <script>
-
     async function featuresGraph(topTracks){
         let trackFeatures = await getAllTrackFeatures(topTracks); // This function is included in the playlistAnalysis file
         let datasets = {
@@ -114,7 +113,13 @@
         let ctx = $('#myChart');
         let chart = new Chart(ctx, {
             type: 'bar',
-            data: {},
+            data: {
+                labels: datasets['danceability'].labels,
+                datasets: [{
+                    label: 'danceability',
+                    data: datasets['danceability'].data
+                }]
+            },
             options:{
                 scales: {
                     xAxes: [{

@@ -28,7 +28,7 @@ async function getAllTrackFeatures(tracks) {
 
         let trackFeatures = [];
         audioFeatures.forEach((audioFeature, i) => {
-            let { acousticness, danceability, energy, id, liveness, loudness, speechiness, tempo, valence } = audioFeature;
+            let { acousticness, danceability, energy, id, liveness, loudness, speechiness, tempo, valence, instrumentalness } = audioFeature;
             let { explicit, popularity, name, artists } = tracks[i];
             
             artists = artists.map((artist) => artist.name);
@@ -37,6 +37,7 @@ async function getAllTrackFeatures(tracks) {
                 name,
                 artists,
                 acousticness,
+                instrumentalness,
                 danceability,
                 energy,
                 id,
