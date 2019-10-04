@@ -100,8 +100,8 @@ async function getTopGenre(tracks){
     let topGenre = findMax(genreCount);
 
     return {
-        topGenre: topGenre.maxName,
-        topGenreCount: topGenre.max
+        name: topGenre.maxName,
+        count: topGenre.max
     }
 }
 

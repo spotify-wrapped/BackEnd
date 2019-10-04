@@ -1,9 +1,9 @@
 <button onClick="createPlaylist()">Create Playlist</button>
 
-<div>
-    <h1>Top Songs</h1>
-    <div id='topSongs'></div>
-</div>
+<div id='topFacts'></div>
+
+<h1>Top Songs</h1>
+<div id='topSongs'></div>
 
 <script
     src="https://code.jquery.com/jquery-3.4.1.min.js"
@@ -23,16 +23,15 @@
 
             let trackFeatures = await getAllTrackFeatures(topTracks); // This function is included in the playlistAnalysis file
             
-            displayTracks(topTracks); 
-            //Helper functions passed in through handlebars
+            // Helper functions passed in through handlebars
             let topAlbum = getTopAlbum(topTracks);
             let topArtist = getTopArtist(topTracks);
             let topGenre = await getTopGenre(topTracks);
-            console.log(topAlbum);
-            console.log(topArtist);
-            console.log(topGenre);
             ///////////////////////////////////////////////
-            graphFeatures(topTracks, trackFeatures);
+            displayFacts(topAlbum, topArtist, topGenre);
+
+            displayTracks(topTracks); 
+            graphFeatures(trackFeatures);
         }catch(err) {
             console.log(err);
             $("#main").append('<div>Please refresh page</div>');
@@ -56,6 +55,16 @@
                 $(`#${id}`).append(`<img src=${albumArt.url} height=75/>`);
             });
         });
+    }
+</script>
+
+<script>
+    function displayFacts(topAlbum, topArtist, topGenre){
+        $('#topFacts').append('<p>Your top album was ' + topAlbum.name + ' showing up ' + topAlbum.numberOfPlays + ' times on this list.</p>');
+
+        $('#topFacts').append('<p>Your top artist was ' + topArtist.name + ' showing up ' + topArtist.numberOfPlays + ' on this list.</p>');
+
+        $('#topFacts').append('<p>Your top genre was ' + topGenre.name + ' showing up on ' + topGenre.count + ' songs</p>');
     }
 </script>
 
@@ -92,7 +101,7 @@
 <canvas id='myChart'></canvas>
 
 <script>
-    function graphFeatures(topTracks, trackFeatures){
+    function graphFeatures(trackFeatures){
         let datasets = {
             acousticness: null,
             danceability: null,
