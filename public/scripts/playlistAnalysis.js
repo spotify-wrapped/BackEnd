@@ -1,20 +1,3 @@
-async function displayAnalysis(topTracks) {
-    try {
-        let topAlbum = getTopAlbum(topTracks);
-        console.log('Your most played album was "' +  topAlbum.name + '" with a total of ' + topAlbum.numberOfSongs + ' songs!' );
-
-        let topGenre = await getTopGenre(topTracks);
-        console.log('Your top genre was "' +  topGenre.topGenre + '" showing up on ' + topGenre.topGenreCount + ' songs!' );
-
-        let topArtist = getTopArtist(topTracks);
-        console.log('Your top artist was "' +  topArtist.name + '" with a total of ' + topArtist.artistCount + ' songs!' );
-
-    }catch(err) {
-        console.log(err);
-        $("#main").append('<div>Please refresh page</div>');
-    }
-}
-
 async function getAllTrackFeatures(tracks) {
     let trackIds = [];
     tracks.forEach(track => trackIds.push(track.id));
@@ -60,24 +43,28 @@ async function getAllTrackFeatures(tracks) {
 }
 
 function getTopAlbum(tracks) {
-    let albumNames = {};
+    let albumIds = {};
     tracks.forEach(function(track){
         let { album } = track;
-        let { name } = album;
-        if (name in albumNames){
-            albumNames[name]++;
+        if (album.id in albumIds){
+            albumIds[album.id]++;
         }
         else{
-            albumNames[name] = 1;
+            albumIds[album.id] = 1;
         }
     });
 
-    let topAlbum = findMaxOfTable(albumNames);
+    let topAlbum = findMax(albumIds);
 
-    return {
-        name: topAlbum.maxName,
-        numberOfSongs: topAlbum.max
-    }
+    let returnAlbum = {};
+    tracks.forEach(function(track){
+        let { album } = track;
+        if(topAlbum.maxName == album.id){
+            returnAlbum = album;
+        }
+    });
+    returnAlbum.numberOfPlays = topAlbum.max;
+    return returnAlbum;
 }
 
 async function getTopGenre(tracks){
@@ -110,7 +97,7 @@ async function getTopGenre(tracks){
         });
     });
 
-    let topGenre = findMaxOfTable(genreCount);
+    let topGenre = findMax(genreCount);
 
     return {
         topGenre: topGenre.maxName,
@@ -119,34 +106,38 @@ async function getTopGenre(tracks){
 }
 
 function getTopArtist(tracks){
-    let artistCount = {};
+    let artistIds = {};
     tracks.forEach(function(track){
         let { artists } = track;
         for(artist of artists){
-            let name = artist.name;
-            if(name in artistCount){
-                artistCount[name] = artistCount[name] + 1;
+            let id = artist.id;
+            if(id in artistIds){
+                artistIds[id] = artistIds[id] + 1;
             } 
-            else artistCount[name] = 1;
+            else artistIds[id] = 1;
         }
     });
 
-    let topArtist = findMaxOfTable(artistCount);
+    let topArtist = findMax(artistIds);
+    let returnArtist = {};
+    tracks.forEach(function(track){
+        let { artists } = track;
+        for(artist of artists){
+            if(artist.id == topArtist.maxName) returnArtist = artist;
+        }
+    });
+    returnArtist.numberOfPlays = topArtist.max;
+    return returnArtist;
 
-    return {
-        name: topArtist.maxName,
-        artistCount: topArtist.max
-    }
 }
 
-
 // Helper function used in other functions
-function findMaxOfTable(hashTable){
+function findMax(table){
     let max = 0;
     let maxName = '';
-    for(element in hashTable){
-        if(hashTable[element] > max){
-            max = hashTable[element];
+    for(element in table){
+        if(table[element] > max){
+            max = table[element];
             maxName = element; 
         }
     }

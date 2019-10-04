@@ -20,11 +20,19 @@
         try {
 
             const { items: topTracks } = await $.post(window.location.origin + '/top', { accessToken });
+
+            let trackFeatures = await getAllTrackFeatures(topTracks); // This function is included in the playlistAnalysis file
             
             displayTracks(topTracks); 
-            displayAnalysis(topTracks); // This function is included in a seperate file. It is not visible here because it is loaded through handlebars server side
-
-            featuresGraph(topTracks);
+            //Helper functions passed in through handlebars
+            let topAlbum = getTopAlbum(topTracks);
+            let topArtist = getTopArtist(topTracks);
+            let topGenre = await getTopGenre(topTracks);
+            console.log(topAlbum);
+            console.log(topArtist);
+            console.log(topGenre);
+            ///////////////////////////////////////////////
+            graphFeatures(topTracks, trackFeatures);
         }catch(err) {
             console.log(err);
             $("#main").append('<div>Please refresh page</div>');
@@ -84,8 +92,7 @@
 <canvas id='myChart'></canvas>
 
 <script>
-    async function featuresGraph(topTracks){
-        let trackFeatures = await getAllTrackFeatures(topTracks); // This function is included in the playlistAnalysis file
+    function graphFeatures(topTracks, trackFeatures){
         let datasets = {
             acousticness: null,
             danceability: null,
@@ -134,7 +141,7 @@
             changeGraph(feature);
         });
 
-        async function changeGraph(feature){
+        function changeGraph(feature){
             let labels = datasets[feature].labels;
             let data = datasets[feature].data;
 
