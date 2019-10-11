@@ -1,15 +1,69 @@
-<button onClick="createPlaylist()">Create Playlist</button>
+<div id="main" class="container">
 
-<div id='topFacts'></div>
+    {{!-- Create Playlist --}}
+    <div class="ui-create-playlist d-flex justify-content-center">
+            <button class="p-1" onClick="createPlaylist()">Create Playlist</button>
+    </div>
 
-<h1>Top Songs</h1>
-<div id='topSongs'></div>
+
+    <div class="row">
+
+        <div id="left-col" class="col-sm-6">
+            {{!-- Songs --}}
+
+            <div class="ui-songs d-flex justify-content-center">
+                <div class="p-1">
+                    <h1>Top Songs</h1>
+                    <div id='top-songs'></div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="right-col" class="col-sm-6">
+
+            {{!-- Top-Facts --}}
+            <div class="ui-facts d-flex justify-content-center">
+
+                {{!-- CAROUSEL --}}
+                <div id="main-carousel" class="carousel slide" data-ride="carousel">
+
+                    {{!-- Indicators --}}
+                    <ul id="main-carousel-indicators" class="carousel-indicators">
+                        
+                    </ul>
+
+                    {{!-- The slideshow --}}
+                    <div id="main-carousel-inner" class="carousel-inner">
+
+                    </div>
+
+                    {{!-- Left and right controls --}}
+                    <a class="carousel-control-prev" href="#main-carousel" data-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </a>
+                    <a class="carousel-control-next" href="#main-carousel" data-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </a>
+
+                </div>
+                
+            </div>
+            
+        </div>
+    
+    </div>
+    
+</div>
+
 
 <script
     src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
     crossorigin="anonymous">
 </script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 <!-- Main -->
 <script>
@@ -23,7 +77,7 @@
 
             let trackFeatures = await getAllTrackFeatures(topTracks); // This function is included in the playlistAnalysis file
             
-            // Helper functions passed in through handlebars
+            // Helper functions passed in through handlebars scripts
             let topAlbum = getTopAlbum(topTracks);
             let topArtist = getTopArtist(topTracks);
             let topGenre = await getTopGenre(topTracks);
@@ -45,26 +99,65 @@
             topTracks.forEach(track => {
                 const { album, artists, id, name } = track;
                 const { name: albumName } = album;
+
                 const albumArt = album.images[1];
 
-                $("#topSongs").append('<div id='+id+'></div>');
-                $(`#${id}`).append('<p>Name: '+name+' | Album: '+albumName+'</p>');
-                artists.forEach(artist => {
-                    $(`#${id}`).append('<p>Artist: ' +artist.name+ '</p>')
-                });
+                $("#top-songs").append('<div id='+id+'></div>');
+                $(`#${id}`).append('<p>Song: '+formatName(name)+' | Album: '+formatName(albumName)+'</p>');
+                
+                {{!-- artists.forEach(artist => { --}}
+                $(`#${id}`).append('<p>Artist: ' +artists[0].name+ '</p>')
+                {{!-- }); --}}
                 $(`#${id}`).append(`<img src=${albumArt.url} height=75/>`);
             });
         });
+    }
+
+    function formatName(name){
+        const MAX_NAME_LENGTH = 20
+        return name.length > MAX_NAME_LENGTH ? name.substring(0, MAX_NAME_LENGTH - 3) + '...' : name;
     }
 </script>
 
 <script>
     function displayFacts(topAlbum, topArtist, topGenre){
-        $('#topFacts').append('<p>Your top album was ' + topAlbum.name + ' showing up ' + topAlbum.numberOfPlays + ' times on this list.</p>');
+        {{!-- $('#top-facts').append('<p>Your top album was ' + topAlbum.name + ' showing up ' + topAlbum.numberOfPlays + ' times on this list.</p>');
 
-        $('#topFacts').append('<p>Your top artist was ' + topArtist.name + ' showing up ' + topArtist.numberOfPlays + ' on this list.</p>');
+        $('#top-facts').append('<p>Your top artist was ' + topArtist.name + ' showing up ' + topArtist.numberOfPlays + ' on this list.</p>');
 
-        $('#topFacts').append('<p>Your top genre was ' + topGenre.name + ' showing up on ' + topGenre.count + ' songs</p>');
+        $('#top-facts').append('<p>Your top genre was ' + topGenre.name + ' showing up on ' + topGenre.count + ' songs</p>'); --}}
+
+        const slides = [
+            'Your top album was ' + topAlbum.name + ' showing up ' + topAlbum.numberOfPlays + ' times on this list.',
+            'Your top artist was ' + topArtist.name + ' showing up ' + topArtist.numberOfPlays + ' on this list.',
+            'Your top genre was ' + topGenre.name + ' showing up on ' + topGenre.count + ' songs'
+        ]
+        addToCarousel(slides);
+    }
+
+    function addToCarousel(slides){
+        
+        slides.forEach((slide, i) => {
+            if(i == 0){
+                $('#main-carousel-indicators').append(`
+                    <li data-target="#main-carousel" data-slide-to="${i}" class="active"></li>
+                `);
+                $('#main-carousel-inner').append(`
+                    <div class="carousel-item active">
+                        <h1>${slide}</h1>
+                    </div>
+                `);
+            }else{
+                $('#main-carousel-indicators').append(`
+                    <li data-target="#main-carousel" data-slide-to="${i}"></li>
+                `);
+                $('#main-carousel-inner').append(`
+                    <div class="carousel-item">
+                        <h1>${slide}</h1>
+                    </div>
+                `);
+            }
+        });
     }
 </script>
 
