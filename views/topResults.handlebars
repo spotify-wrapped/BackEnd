@@ -1,16 +1,12 @@
 <div id="main" class="container">
-
     {{!-- Create Playlist --}}
     <div class="ui-create-playlist d-flex justify-content-center">
             <button class="p-1" onClick="createPlaylist()">Create Playlist</button>
     </div>
 
-
     <div class="row">
-
         <div id="left-col" class="col-sm-6">
             {{!-- Songs --}}
-
             <div class="ui-songs d-flex justify-content-center">
                 <div class="p-1">
                     <h1>Top Songs</h1>
@@ -19,25 +15,15 @@
             </div>
         </div>
 
-
         <div id="right-col" class="col-sm-6">
-
             {{!-- Top-Facts --}}
             <div class="ui-facts d-flex justify-content-center">
-
                 {{!-- CAROUSEL --}}
                 <div id="main-carousel" class="carousel slide" data-ride="carousel">
-
                     {{!-- Indicators --}}
-                    <ul id="main-carousel-indicators" class="carousel-indicators">
-                        
-                    </ul>
-
+                    <ul id="main-carousel-indicators" class="carousel-indicators"></ul>
                     {{!-- The slideshow --}}
-                    <div id="main-carousel-inner" class="carousel-inner">
-
-                    </div>
-
+                    <div id="main-carousel-inner" class="carousel-inner"></div>
                     {{!-- Left and right controls --}}
                     <a class="carousel-control-prev" href="#main-carousel" data-slide="prev">
                         <span class="carousel-control-prev-icon"></span>
@@ -45,15 +31,23 @@
                     <a class="carousel-control-next" href="#main-carousel" data-slide="next">
                         <span class="carousel-control-next-icon"></span>
                     </a>
-
                 </div>
-                
             </div>
-            
-        </div>
-    
+
+            {{!-- Audio Fetures Chart --}}
+            <select id='audioFeature'>
+                <option value='acousticness'>Acousticness</option>
+                <option value='danceability' selected>Danceability</option>
+                <option value='energy'>Energy</option>
+                <option value='instrumentalness'>Instrumentalness</option>
+                <option value='liveness'>Liveness</option>
+                <option value='loudness'>Loudness</option>
+                <option value='speechiness'>Speechiness</option>
+                <option value='valence'>Valence</option>
+            </select>
+            <canvas id='myChart'></canvas>
+        </div>   
     </div>
-    
 </div>
 
 
@@ -61,6 +55,8 @@
 </script>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js'></script>
 
 <!-- Main -->
 <script>
@@ -156,24 +152,7 @@
     }
 </script>
 
-<!-- Chart Section -->
-<script 
-    src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js'>
-</script>
-
-<select id='audioFeature'>
-    <option value='acousticness'>Acousticness</option>
-    <option value='danceability' selected>Danceability</option>
-    <option value='energy'>Energy</option>
-    <option value='instrumentalness'>Instrumentalness</option>
-    <option value='liveness'>Liveness</option>
-    <option value='loudness'>Loudness</option>
-    <option value='speechiness'>Speechiness</option>
-    <option value='valence'>Valence</option>
-    <option value='tempo'>Tempo</option>
-</select>
-<canvas id='myChart'></canvas>
-
+<!-- Script for plotting track graph data -->
 <script>
     function graphFeatures(trackFeatures){
         let datasets = {
