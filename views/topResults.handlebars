@@ -67,18 +67,16 @@
     const accessToken = sessionStorage.getItem('accessToken');
     $( document ).ready(async function(){
         try {
-
             const { items: topTracks } = await $.post(window.location.origin + '/top', { accessToken });
-
-            let trackFeatures = await getAllTrackFeatures(topTracks); // This function is included in the playlistAnalysis file
             
-            // Helper functions passed in through handlebars scripts
+            // Functions defined in playlistAnalysis file
+            let trackFeatures = await getAllTrackFeatures(topTracks);
             let topAlbum = getTopAlbum(topTracks);
             let topArtist = getTopArtist(topTracks);
             let topGenre = await getTopGenre(topTracks);
             ///////////////////////////////////////////////
-            displayFacts(topAlbum, topArtist, topGenre);
 
+            displayFacts(topAlbum, topArtist, topGenre);
             displayTracks(topTracks); 
             graphFeatures(trackFeatures);
         }catch(err) {
@@ -88,23 +86,19 @@
     });
 </script>
 
+<!-- Script for displaying top tracks list -->
 <script>
     function displayTracks(topTracks){
-        $(document).ready(function(){
-            topTracks.forEach(track => {
-                const { album, artists, id, name } = track;
-                const { name: albumName } = album;
+        topTracks.forEach(track => {
+            const { album, artists, id, name } = track;
+            const { name: albumName } = album;
 
-                const albumArt = album.images[1];
+            const albumArt = album.images[1];
 
-                $("#top-songs").append('<div id='+id+'></div>');
-                $(`#${id}`).append('<p>Song: '+formatName(name)+' | Album: '+formatName(albumName)+'</p>');
-                
-                {{!-- artists.forEach(artist => { --}}
-                $(`#${id}`).append('<p>Artist: ' +artists[0].name+ '</p>')
-                {{!-- }); --}}
-                $(`#${id}`).append(`<img src=${albumArt.url} height=75/>`);
-            });
+            $("#top-songs").append('<div id='+id+'></div>');
+            $(`#${id}`).append('<p>Song: '+formatName(name)+' | Album: '+formatName(albumName)+'</p>');
+            $(`#${id}`).append('<p>Artist: ' +artists[0].name+ '</p>');
+            $(`#${id}`).append(`<img src=${albumArt.url} height=75/>`);
         });
     }
 
@@ -114,24 +108,15 @@
     }
 </script>
 
+<!-- Script for displaying facts carousel -->
 <script>
     function displayFacts(topAlbum, topArtist, topGenre){
-        {{!-- $('#top-facts').append('<p>Your top album was ' + topAlbum.name + ' showing up ' + topAlbum.numberOfPlays + ' times on this list.</p>');
-
-        $('#top-facts').append('<p>Your top artist was ' + topArtist.name + ' showing up ' + topArtist.numberOfPlays + ' on this list.</p>');
-
-        $('#top-facts').append('<p>Your top genre was ' + topGenre.name + ' showing up on ' + topGenre.count + ' songs</p>'); --}}
-
         const slides = [
             'Your top album was ' + topAlbum.name + ' showing up ' + topAlbum.numberOfPlays + ' times on this list.',
             'Your top artist was ' + topArtist.name + ' showing up ' + topArtist.numberOfPlays + ' on this list.',
             'Your top genre was ' + topGenre.name + ' showing up on ' + topGenre.count + ' songs'
         ]
-        addToCarousel(slides);
-    }
-
-    function addToCarousel(slides){
-        
+        //Add Slides to Carousel
         slides.forEach((slide, i) => {
             if(i == 0){
                 $('#main-carousel-indicators').append(`
@@ -156,6 +141,7 @@
     }
 </script>
 
+<!-- Script for create playlist button -->
 <script>
     function createPlaylist(){
         $.post(
