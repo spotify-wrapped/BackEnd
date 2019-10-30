@@ -20,3 +20,8 @@
     color: rgb(255, 255, 255);
     border: none;
 }
+
+.authorize-button:hover {
+    transition-duration: .3s;
+    background-color: rgb(50, 50, 50);
+}
