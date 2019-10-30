@@ -40,6 +40,7 @@ app.get('/', (req, res) => {
 	res.render('home', { 
 		authUrl,
 		redirect_uri,
+		css: ['homepage']
 	});
 });
 
