@@ -40,7 +40,6 @@ app.get('/', (req, res) => {
 	res.render('home', { 
 		authUrl,
 		redirect_uri,
-		css: ['homepage']
 	});
 });
 
@@ -59,9 +58,7 @@ app.get('/callback', async(req, res) => {
 
 // Return handlebars page of their top results
 app.get('/top', (req, res) => {
-	res.render('topResults', {
-		scripts: ['playlistAnalysis']
-	});
+	res.render('topResults');
 });
 
 // Return data of top 50 songs 

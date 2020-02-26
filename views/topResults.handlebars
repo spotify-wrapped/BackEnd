@@ -1,62 +1,20 @@
-<div id="main" class="container">
+{{!-- Got rid of bootstrap --}}
+{{!-- Got rid of graph features --}}
+{{!-- Got rid of playlistAnalysis and related funcitonality --}}
+{{!-- Clean up structure and delete unwanted features of topResults.html --}}
+{{!-- Got rid of all css --}}
+<div id="main">
     {{!-- Create Playlist --}}
-    <div class="ui-create-playlist d-flex justify-content-center">
-            <button class="p-1" onClick="createPlaylist()">Create Playlist</button>
-    </div>
+    <button onClick="createPlaylist()">Create Playlist</button>
 
-    <div class="row">
-        <div id="left-col" class="col-sm-6">
-            {{!-- Songs --}}
-            <div class="ui-songs d-flex justify-content-center">
-                <div class="p-1">
-                    <h1>Top Songs</h1>
-                    <div id='top-songs'></div>
-                </div>
-            </div>
-        </div>
-
-        <div id="right-col" class="col-sm-6">
-            {{!-- Top-Facts --}}
-            <div class="ui-facts d-flex justify-content-center">
-                {{!-- CAROUSEL --}}
-                <div id="main-carousel" class="carousel slide" data-ride="carousel">
-                    {{!-- Indicators --}}
-                    <ul id="main-carousel-indicators" class="carousel-indicators"></ul>
-                    {{!-- The slideshow --}}
-                    <div id="main-carousel-inner" class="carousel-inner"></div>
-                    {{!-- Left and right controls --}}
-                    <a class="carousel-control-prev" href="#main-carousel" data-slide="prev">
-                        <span class="carousel-control-prev-icon"></span>
-                    </a>
-                    <a class="carousel-control-next" href="#main-carousel" data-slide="next">
-                        <span class="carousel-control-next-icon"></span>
-                    </a>
-                </div>
-            </div>
-
-            {{!-- Audio Fetures Chart --}}
-            <select id='audioFeature'>
-                <option value='acousticness'>Acousticness</option>
-                <option value='danceability' selected>Danceability</option>
-                <option value='energy'>Energy</option>
-                <option value='instrumentalness'>Instrumentalness</option>
-                <option value='liveness'>Liveness</option>
-                <option value='loudness'>Loudness</option>
-                <option value='speechiness'>Speechiness</option>
-                <option value='valence'>Valence</option>
-            </select>
-            <canvas id='myChart'></canvas>
-        </div>   
-    </div>
+    <div>
+        <h1>Top Songs</h1>
+        <div id='top-songs'></div>
+    </div>  
 </div>
 
 
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
-</script>
-
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
-<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js'></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
 <!-- Main -->
 <script>
@@ -64,17 +22,7 @@
     $( document ).ready(async function(){
         try {
             const { items: topTracks } = await $.post(window.location.origin + '/top', { accessToken });
-            
-            // Functions defined in playlistAnalysis file
-            let trackFeatures = await getAllTrackFeatures(topTracks);
-            let topAlbum = getTopAlbum(topTracks);
-            let topArtist = getTopArtist(topTracks);
-            let topGenre = await getTopGenre(topTracks);
-            ///////////////////////////////////////////////
-
-            displayFacts(topAlbum, topArtist, topGenre);
             displayTracks(topTracks); 
-            graphFeatures(trackFeatures);
         }catch(err) {
             console.log(err);
             $("#main").append('<div>Please refresh page</div>');
@@ -92,47 +40,9 @@
             const albumArt = album.images[1];
 
             $("#top-songs").append('<div id='+id+'></div>');
-            $(`#${id}`).append('<p>Song: '+formatName(name)+' | Album: '+formatName(albumName)+'</p>');
+            $(`#${id}`).append('<p>Song: '+name+' | Album: '+albumName+'</p>');
             $(`#${id}`).append('<p>Artist: ' +artists[0].name+ '</p>');
             $(`#${id}`).append(`<img src=${albumArt.url} height=75/>`);
-        });
-    }
-
-    function formatName(name){
-        const MAX_NAME_LENGTH = 20
-        return name.length > MAX_NAME_LENGTH ? name.substring(0, MAX_NAME_LENGTH - 3) + '...' : name;
-    }
-</script>
-
-<!-- Script for displaying facts carousel -->
-<script>
-    function displayFacts(topAlbum, topArtist, topGenre){
-        const slides = [
-            'Your top album was ' + topAlbum.name + ' showing up ' + topAlbum.numberOfPlays + ' times on this list.',
-            'Your top artist was ' + topArtist.name + ' showing up ' + topArtist.numberOfPlays + ' on this list.',
-            'Your top genre was ' + topGenre.name + ' showing up on ' + topGenre.count + ' songs'
-        ]
-        //Add Slides to Carousel
-        slides.forEach((slide, i) => {
-            if(i == 0){
-                $('#main-carousel-indicators').append(`
-                    <li data-target="#main-carousel" data-slide-to="${i}" class="active"></li>
-                `);
-                $('#main-carousel-inner').append(`
-                    <div class="carousel-item active">
-                        <h1>${slide}</h1>
-                    </div>
-                `);
-            }else{
-                $('#main-carousel-indicators').append(`
-                    <li data-target="#main-carousel" data-slide-to="${i}"></li>
-                `);
-                $('#main-carousel-inner').append(`
-                    <div class="carousel-item">
-                        <h1>${slide}</h1>
-                    </div>
-                `);
-            }
         });
     }
 </script>
@@ -149,76 +59,5 @@
                 console.log(`Playlist Created! Data: ${data}, Status: ${status}`);
             }
         );
-    }
-</script>
-
-<!-- Script for plotting track graph data -->
-<script>
-    function graphFeatures(trackFeatures){
-        let datasets = {
-            acousticness: null,
-            danceability: null,
-            energy: null,
-            instrumentalness: null,
-            liveness: null,
-            loudness: null,
-            speechiness: null,
-            valence: null,
-            temp: null,
-        }
-        for(dataType in datasets){
-            let data = [];
-            let labels = [];
-            for(track of trackFeatures){
-                data.push(track[dataType]);
-                labels.push(track.name + ' - ' + track.artists.toString());
-            }
-            datasets[dataType] = {
-                data,
-                labels
-            }
-        }
-
-        let ctx = $('#myChart');
-        let chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: datasets['danceability'].labels,
-                datasets: [{
-                    label: 'danceability',
-                    data: datasets['danceability'].data
-                }]
-            },
-            options:{
-                scales: {
-                    xAxes: [{
-                        display: false
-                    }]
-                },
-            }
-        });
-
-        $('#audioFeature').on('change', function(e){
-            let feature = $('#audioFeature :selected').val();
-            changeGraph(feature);
-        });
-
-        function changeGraph(feature){
-            let labels = datasets[feature].labels;
-            let data = datasets[feature].data;
-
-            let barChartData = {
-                labels,
-                datasets: [
-                    {
-                        label: feature,
-                        data
-                    }
-                ]
-            };
-
-            chart.data = barChartData;
-            chart.update();
-        }
     }
 </script>
