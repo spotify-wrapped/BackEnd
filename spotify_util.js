@@ -210,6 +210,31 @@ let get_artists = async (access_token, artistIds) => {
 	}
 };
 
+let play_uri = async (access_token, device_id, uris) => {
+	let endpoint = `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`;
+	let headers = {
+		Authorization: 'Bearer ' + access_token,
+		'Content-Type': 'application/json'
+	};
+
+	let data = { // Parameters for api request body
+		uris
+	};
+
+	try{
+		const response = await axios({
+			method: 'put',
+			url: endpoint,
+			data: data,
+			headers: headers 
+		});
+		return response.data; // Return information of the playlist
+
+	}catch(err) {
+		return err;
+	}
+};
+
 module.exports = {
 	get_tokens: get_tokens,
 	get_top: get_top,
@@ -218,5 +243,6 @@ module.exports = {
 	add_tracks_playlist: add_tracks_playlist,
 	get_tracks,
 	get_multi_audio_features,
-	get_artists
+	get_artists,
+	play_uri
 };

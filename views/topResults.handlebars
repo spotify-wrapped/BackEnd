@@ -28,12 +28,12 @@
 <script>
     function displayTracks(topTracks){
         topTracks.forEach(track => {
-            const { album, artists, id, name } = track;
+            const { album, artists, id, name, uri } = track;
             const { name: albumName } = album;
 
             const albumArt = album.images[1];
 
-            $("#songs-list").append('<div class="song-entry" id='+id+'></div>');
+            $("#songs-list").append('<div class="song-entry" id='+id+' uri='+uri+'></div>');
             $(`#${id}`).append(`<img class="album-image" src=${albumArt.url} height=75/>`);
             $(`#${id}`).append('<p class="song-text">'+name+' - '+artists[0].name+'</p>');
         });
@@ -50,6 +50,50 @@
             },
             (data, status) => {
                 console.log(`Playlist Created! Data: ${data}, Status: ${status}`);
+            }
+        );
+    }
+</script>
+
+<!-- Script for initializing Web Player and making server request to play song -->
+<script src="https://sdk.scdn.co/spotify-player.js"></script>
+<script>
+    window.onSpotifyWebPlaybackSDKReady = () => {
+        const token = sessionStorage.getItem('accessToken');
+        const player = new Spotify.Player({
+            name: 'Web Playback SDK Top Tracks Player',
+            getOAuthToken: cb => { cb(token); }
+        });
+        // Ready
+        player.addListener('ready', ({ device_id }) => {
+            console.log('Ready with Device ID', device_id);
+
+            let songEntries = $('#songs-list').children();
+            for(song of songEntries){
+                let uri = $(song).attr('uri');
+                $(song).on('click', function(){
+                    playUri(token, device_id, uri);
+                });
+            }
+        });
+        // Not Ready
+        player.addListener('not_ready', ({ device_id }) => {
+            console.log('Device ID has gone offline', device_id);
+        });
+        // Connect to the player!
+        player.connect();
+    }
+
+    function playUri(accessToken, deviceId, uri){
+        $.post(
+            window.location.origin + '/playUri',
+            {
+                accessToken,
+                deviceId,
+                uri
+            },
+            (data, status) => {
+                console.log(`Playing Song! Data: ${data}, Status: ${status}`);
             }
         );
     }

@@ -1,3 +1,5 @@
+const axios = require('axios'); // Library to make HTTP request
+
 let results = require('dotenv').config()
 
 const client_id = process.env.client_id;
@@ -162,6 +164,19 @@ app.post('/getArtists', async(req, res) => {
 		let artists = await spotify_util.get_artists(accessToken, ids);
 
 		res.send(artists);
+	}catch(err) {
+		console.log(err);
+		res.send(err);
+	}
+});
+
+// Play a uri on a specific device
+app.post('/playUri', async(req, res)=> {
+	const { accessToken, deviceId, uri } = req.body;
+	try {
+		let playData = await spotify_util.play_uri(accessToken, deviceId, [uri]);
+
+		res.send(playData);
 	}catch(err) {
 		console.log(err);
 		res.send(err);
