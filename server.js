@@ -58,7 +58,9 @@ app.get('/callback', async(req, res) => {
 
 // Return handlebars page of their top results
 app.get('/top', (req, res) => {
-	res.render('topResults');
+	res.render('topResults', {
+		css: ['topResult']
+	});
 });
 
 // Return data of top 50 songs 
