@@ -70,8 +70,9 @@
 
             let songEntries = $('#songs-list').children();
             for(song of songEntries){
+                let albumImage = $(song).children('.album-image');
                 let uri = $(song).attr('uri');
-                $(song).on('click', function(){
+                $(albumImage).on('click', function(){
                     playUri(token, device_id, uri);
                 });
             }
