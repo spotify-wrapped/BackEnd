@@ -210,8 +210,34 @@ let get_artists = async (access_token, artistIds) => {
 	}
 };
 
-let play_uri = async (access_token, device_id, uris) => {
+let play_uri = async (access_token, device_id, uris, position_ms) => {
 	let endpoint = `https://api.spotify.com/v1/me/player/play?device_id=${device_id}`;
+	let headers = {
+		Authorization: 'Bearer ' + access_token,
+		'Content-Type': 'application/json'
+	};
+
+	let data = { // Parameters for api request body
+		uris,
+		position_ms
+	};
+
+	try{
+		const response = await axios({
+			method: 'put',
+			url: endpoint,
+			data: data,
+			headers: headers 
+		});
+		return response.data; // Return information of the playlist
+
+	}catch(err) {
+		return err;
+	}
+};
+
+let pause_uri = async (access_token, device_id, uris) => {
+	let endpoint = `https://api.spotify.com/v1/me/player/pause?device_id=${device_id}`;
 	let headers = {
 		Authorization: 'Bearer ' + access_token,
 		'Content-Type': 'application/json'
@@ -235,6 +261,26 @@ let play_uri = async (access_token, device_id, uris) => {
 	}
 };
 
+let get_playback_data = async (access_token) => {
+	let endpoint = `https://api.spotify.com/v1/me/player/`;
+	let headers = {
+		Authorization: 'Bearer ' + access_token,
+		'Content-Type': 'application/json'
+	};
+
+	try{
+		const response = await axios({
+			method: 'get',
+			url: endpoint,
+			headers: headers 
+		});
+		return response.data; // Return information of the playlist
+
+	}catch(err) {
+		return err;
+	}
+};
+
 module.exports = {
 	get_tokens: get_tokens,
 	get_top: get_top,
@@ -244,5 +290,7 @@ module.exports = {
 	get_tracks,
 	get_multi_audio_features,
 	get_artists,
-	play_uri
+	play_uri,
+	pause_uri,
+	get_playback_data
 };

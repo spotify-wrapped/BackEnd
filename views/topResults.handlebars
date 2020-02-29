@@ -34,7 +34,9 @@
             const albumArt = album.images[1];
 
             $("#songs-list").append('<div class="song-entry" id='+id+' uri='+uri+'></div>');
-            $(`#${id}`).append(`<img class="album-image" src=${albumArt.url} height=75/>`);
+            $(`#${id}`).append('<div class=album-section></div>');
+            $(`#${id} .album-section`).append(`<img class="album-image" src=${albumArt.url} width=100%/>`);
+            $(`#${id} .album-section`).append('<div class="play-button"><p class="play-icon">&#9654;</p></div>');
             $(`#${id}`).append('<p class="song-text">'+name+' - '+artists[0].name+'</p>');
         });
     }
@@ -55,9 +57,12 @@
     }
 </script>
 
-<!-- Script for initializing Web Player and making server request to play song -->
+<!-- Script for initializing Web Player functionality -->
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
 <script>
+    let isPlaying = false;
+    let isPaused = false;
+    let currSong = null;
     window.onSpotifyWebPlaybackSDKReady = () => {
         const token = sessionStorage.getItem('accessToken');
         const player = new Spotify.Player({
@@ -70,11 +75,7 @@
 
             let songEntries = $('#songs-list').children();
             for(song of songEntries){
-                let albumImage = $(song).children('.album-image');
-                let uri = $(song).attr('uri');
-                $(albumImage).on('click', function(){
-                    playUri(token, device_id, uri);
-                });
+                addPlayListener(token, device_id, song);
             }
         });
         // Not Ready
@@ -85,16 +86,75 @@
         player.connect();
     }
 
-    function playUri(accessToken, deviceId, uri){
+    function addPlayListener(token, device_id, song){
+        let id = $(song).attr('id');
+        let albumSection = $(song).children('.album-section');
+        let uri = $(song).attr('uri');
+        $(albumSection).on('click', async function(){
+            if(isPlaying){ // Music is playing
+                if(id == currSong){ // User wanted to pause song
+                    pauseUri(token, device_id, uri);
+                    $(`#${currSong} .play-button p`).html('&#9646;&#9646;');
+                    isPlaying = false;
+                    isPaused = true;
+                } else { // User wanted to play entirely new song
+                    $(`#${currSong} .play-button`).css('display', 'none');
+                    playUri(token, device_id, uri);
+                    currSong = id;
+                    $(`#${id} .play-button`).css('display', 'block');
+                }  
+            } else { // Nothing is playing 
+                if(isPaused){ // Song is paused, either play new song, or resume old song
+                    if(id == currSong){ // User wanted to resume song that was playing
+                        let playbackData = await getPlaybackData(token);
+                        playUri(token, device_id, uri, playbackData.progress_ms);
+                        $(`#${id} .play-button p`).html('&#9654;');
+                    } else { // User wanted to play new song while another is paused
+                        $(`#${currSong} .play-button p`).html('&#9654;');
+                        $(`#${currSong} .play-button`).css('display', 'none');
+                        currSong = id;
+                        playUri(token, device_id, uri);
+                        $(`#${id} .play-button`).css('display', 'block');
+                    }
+                    isPaused = false;
+                } else { // No song is paused, and nothing is playing, play an entirely new track!
+                    currSong = id;
+                    playUri(token, device_id, uri);
+                    $(`#${id} .play-button`).css('display', 'block');
+                }
+                isPlaying = true;
+            }
+        });
+    }
+
+    function playUri(accessToken, deviceId, uri, timestamp){
         $.post(
             window.location.origin + '/playUri',
             {
                 accessToken,
                 deviceId,
+                uri,
+                timestamp
+            }
+        );
+    }
+
+    function pauseUri(accessToken, deviceId, uri){
+        $.post(
+            window.location.origin + '/pauseUri',
+            {
+                accessToken,
+                deviceId,
                 uri
-            },
-            (data, status) => {
-                console.log(`Playing Song! Data: ${data}, Status: ${status}`);
+            }
+        );
+    }
+
+    async function getPlaybackData(accessToken){
+        return await $.post(
+            window.location.origin + '/getPlaybackData',
+            {
+                accessToken
             }
         );
     }

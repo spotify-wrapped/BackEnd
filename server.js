@@ -172,10 +172,39 @@ app.post('/getArtists', async(req, res) => {
 
 // Play a uri on a specific device
 app.post('/playUri', async(req, res)=> {
+	const { accessToken, deviceId, uri, timestamp } = req.body;
+	let positionMs = 0;
+	if(timestamp){
+		positionMs = timestamp;
+	}
+	try {
+		let playData = await spotify_util.play_uri(accessToken, deviceId, [uri], positionMs);
+
+		res.send(playData);
+	}catch(err) {
+		console.log(err);
+		res.send(err);
+	}
+});
+
+// Pause a uri on a specific device
+app.post('/pauseUri', async(req, res)=> {
 	const { accessToken, deviceId, uri } = req.body;
 	try {
-		let playData = await spotify_util.play_uri(accessToken, deviceId, [uri]);
+		let playData = await spotify_util.pause_uri(accessToken, deviceId, [uri]);
 
+		res.send(playData);
+	}catch(err) {
+		console.log(err);
+		res.send(err);
+	}
+});
+
+// Get playback data
+app.post('/getPlaybackData', async(req, res)=> {
+	const { accessToken } = req.body;
+	try {
+		let playData = await spotify_util.get_playback_data(accessToken);
 		res.send(playData);
 	}catch(err) {
 		console.log(err);

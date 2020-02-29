@@ -37,12 +37,35 @@
     background-color: rgba(0, 0, 0, 0.10);
 }
 
+.album-section {
+    position: relative;
+    width: 100%;
+}
+
 .album-image {
     margin: auto auto;
 }
 
-.album-image:hover {
-    color: red;
+.play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 45px;
+    height: 45px;
+    background: #000;
+    color: #fff;
+    border-radius: 100px;
+    display: none;
+}
+
+.play-icon {
+    position: absolute;
+    left: 52%;
+    top: 48%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    font-weight: 900;
 }
 
 .song-text {
