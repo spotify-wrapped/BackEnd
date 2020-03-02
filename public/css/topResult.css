@@ -4,6 +4,10 @@
     display: inherit;
 }
 
+.top-title {
+    font-size: 50px;
+}
+
 .content-container {
     position: absolute;
     top: 50%;
@@ -17,18 +21,22 @@
     padding: 28px 28px;
     border-radius: 32px;
     box-shadow: 0px 0px 25px -11px #797979;
+    margin: 17px auto;
 }
 
 #songs-list {
     height: 100%;
     overflow: scroll;
+    overflow-x: hidden;
+    width: 80%;
+    margin: auto auto;
 }
 
 .song-entry {
     display: grid;
     grid-template-columns: 15% auto;
     grid-template-rows: auto;
-    margin: 7px 15%;
+    margin: 7px 3%;
     border-bottom: 1px solid #c1c1c1;
     border-top: 1px solid #c1c1c1;
 }
@@ -72,6 +80,12 @@
     margin: auto 0;
 }
 
-#songs-list::-webkit-scrollbar {
-    display: none;
-  }
+.playlist-button {
+    width: 250px;
+    height: 65px;
+    border-radius: 100px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    font-size: 20px;
+}
