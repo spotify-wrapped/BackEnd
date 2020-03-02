@@ -1,0 +1,28 @@
+.homepage-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.homepage-title {
+    font-size: 75px;
+    margin: 25px auto;
+}
+
+.authorize-button {
+    width: 250px;
+    height: 65px;
+    border-radius: 100px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    font-size: 20px;
+}
+
+.authorize-button:hover {
+    background-color: #222;
+}
