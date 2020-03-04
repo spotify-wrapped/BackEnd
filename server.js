@@ -109,10 +109,10 @@ app.post('/createPlaylist', async(req, res) => {
 		let playlist_data = await spotify_util.create_playlist(
 			accessToken, 
 			profile.id, // User id to add the playlist to 
-			'Top 50 Past 4 Weeks', // Name of the playlist 
+			'Spotify Project Top Playlist', // Name of the playlist 
 			true, // Boolean for public access to playlist 
 			false, // Boolean for collaborative playlist 
-			'["_"]' // Description of the playlist
+			'Thanks for testing my project!' // Description of the playlist
 		);
 	
 		let add_track_data = await spotify_util.add_tracks_playlist(

@@ -1,10 +1,13 @@
 <div class="content-container">
-
-    <h1 class='top-title horizontal-center'>Your Top Songs</h1>
+    <h1 class='top-title'>Your Top Songs</h1>
+    <p class='top-description'>
+        Click on an album image to stream/pause a song<br>
+        Click "Create Playlist" to create this as a playlist on your Spotify Account
+    </p>
     <div class='list-container'>
         <div id='songs-list'></div>
     </div>  
-    <button class='playlist-button horizontal-center' onClick="createPlaylist()">Create Playlist</button>
+    <button class='playlist-button' onClick="createPlaylist()">Create Playlist</button>
 </div>
 
 
@@ -42,18 +45,23 @@
     }
 </script>
 
-<!-- Script for create playlist button -->
+<!-- Script for create playlist button/playlist creation result -->
 <script>
+    let playlistCreated = false;
     function createPlaylist(){
-        $.post(
-            window.location.origin + '/createPlaylist',
-            {
-                accessToken
-            },
-            (data, status) => {
-                console.log(`Playlist Created! Data: ${data}, Status: ${status}`);
-            }
-        );
+        if(!playlistCreated){
+            {{!-- $.post(
+                window.location.origin + '/createPlaylist',
+                {
+                    accessToken
+                },
+                (data, status) => {
+                    console.log(`Playlist Created! Data: ${data}, Status: ${status}`);
+                }
+            ); --}}
+            $('.content-container').append('<p class="top-description">A Playlist has been created on your Spotify account under "Spotify Project Top Playlist" If you are using the Spotify application, it might take a moment to load. The Spotify Web Player Site has quicker results.</p>');
+            playlistCreated = true;
+        }
     }
 </script>
 
