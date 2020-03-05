@@ -30,10 +30,10 @@
 
 .project-description {
     margin: 18px;
-    font-size: 25px;
+    font-size: 20px;
 }
 
 .project-description {
     list-style: circle inside;
-    max-width: 1183px;
+    max-width: 1000px;
 }
