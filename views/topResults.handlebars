@@ -50,7 +50,7 @@
     let playlistCreated = false;
     function createPlaylist(){
         if(!playlistCreated){
-            {{!-- $.post(
+            $.post(
                 window.location.origin + '/createPlaylist',
                 {
                     accessToken
@@ -58,7 +58,7 @@
                 (data, status) => {
                     console.log(`Playlist Created! Data: ${data}, Status: ${status}`);
                 }
-            ); --}}
+            );
             $('.content-container').append('<p class="top-description">A Playlist has been created on your Spotify account under "Spotify Project Top Playlist" If you are using the Spotify application, it might take a moment to load. The Spotify Web Player Site has quicker results.</p>');
             playlistCreated = true;
         }
