@@ -4,7 +4,6 @@
 
 <script>
 	window.opener.sessionStorage.setItem('accessToken', '{{{access_token}}}');
-	window.opener.sessionStorage.setItem('refreshToken', '{{{refresh_token}}}');
 	
 	window.onunload = () => {
 		window.opener.redirect();
