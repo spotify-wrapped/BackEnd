@@ -4,13 +4,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
     height: 100%;
     width: 100%;
 }
 
 .homepage-title {
     font-size: 75px;
-    margin: 25px auto;
+    font-weight: 900;
 }
 
 .authorize-button {
@@ -25,4 +26,14 @@
 
 .authorize-button:hover {
     background-color: #222;
+}
+
+.project-description {
+    margin: 18px;
+    font-size: 25px;
+}
+
+.project-description {
+    list-style: circle inside;
+    max-width: 1183px;
 }
