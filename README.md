@@ -1,6 +1,4 @@
 # SpotifyWrapped
-Available at https://sheltered-reaches-35391.herokuapp.com/
+Available at https://spotify-project-kian-daniel.herokuapp.com/
 
-Creates playlists based on song history.
-
-Website based off of the Spotify Wrapped service. The website will provide the user with top played tracks and artist of the past month and will prompt the user to create a playlist of 50 songs based off that.
+This project shows a user their top played songs of the month and enables them to create a playlist from it. Users are also able to control the playback of displayed songs in browser.
