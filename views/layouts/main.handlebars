@@ -5,18 +5,21 @@
     <title>Spotify Wrapped</title>
 
     <link rel="stylesheet" type="text/css" href="/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="/css/components.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;500;700;900&display=swap" rel="stylesheet">
     {{#each css}}
             <link rel="stylesheet" type="text/css" href="/css/{{this}}.css">
     {{/each}}
 </head>
 
 <body>
- 
-    {{{body}}}
+    <div class="page-container">
+        {{{body}}}
 
-    {{#each scripts}}
-        <script type="text/javascript" src="/scripts/{{this}}.js"></script>
-    {{/each}}
+        {{#each scripts}}
+            <script type="text/javascript" src="/scripts/{{this}}.js"></script>
+        {{/each}}
+    </div>
  
 </body>
 </html>

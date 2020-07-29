@@ -1,18 +1,7 @@
-<div class='homepage-container'>
-	<h1 class='homepage-title'>Spotify Project</h1>
-	<p class='project-description'>
-		This Project allows users to view/interact with their most played songs over the past 4 weeks. <br>
-		A Spotify Premium account is required in order to stream music. 
-	</p>
-	<p class='project-description' style='text-decoration: underline;'>Because using the project involves viewing/modifying data on your Spotify account,here is some relevant information beforehand:</p>
-	<ul class='project-description'>
-		<li>Clicking "Authorize App" will open a pop up window to the Spotify Authorize endpoint (https://accounts.spotify.com/authorize?) and ask you to login to your Spotify Account.</li>
-		<li>The authorize endpoint will list the actions and data that the project will be able to perform and view/alter.</li>
-		<li>Once authorization is given, the pop up window will be closed while passing a public access token to the site in order to perform request to the Spotify Web API/set up the Webplayer SDK.</li>
-	</ul>
-	<button class='authorize-button' onClick="authOnClick()">Authorize App</button>
-	<p class='project-description'>If you do not want to connect your Spotify account to a project from an unknown person on the web, feel free to check out the GitHub repository linked below that this site builds from (using Heroku).</p>
-	<p class='project-description'><a target='_blank' href='https://github.com/spotify-wrapped/BackEnd'>GitHub Repository Link</a></p>
+<div class='content-centered home-content'>
+	<h1>Spotify Project</h1>
+	<p>Connect your Spotify account to see your most played songs of the month.</p>
+	<button onClick="authOnClick()">Connect</button>
 </div>
 
 <script>
